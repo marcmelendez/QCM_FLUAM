@@ -1,0 +1,53 @@
+#Chose scheme
+quasiNeutrallyBuoyant
+particles		1
+colors 	 	1
+
+#Cutoff for the particle-particle interaction
+cutoff                  1.1225
+#Give file with the bonded force between particles (see fluam/bin/inputfile/README)
+threeBondedForces               rods.3bond
+
+#Maximum number of particles in the neighbor list
+maxNumberPartInCellNonBonded    10
+maxNumberPartInCell     	10
+
+#Fluid density
+densfluid               1
+#Shear viscosity
+shearviscosity          1
+#Temperature in energy units (T -> k_B*T)
+temperature             1
+
+
+#Number of fluid cells in the directions x, y and z
+cells   36 34 64
+#Dimensions of the simulation box
+celldimension	   	18.345 16.861 32.218
+
+initfluid 1
+
+
+#To give an initial configuration for the particles
+#set loadparticles to 1 and provide the file for initial configuration
+loadparticles		1
+coordinates		rods.pos
+
+#Number of relaxation steps during which fluam save no data
+numstepsRelaxation	0
+#Number of steps (no counting numstepsRelaxation)
+numsteps                20000
+#Save data every samplefreq steps
+samplefreq              20
+
+#Time step
+dt			0.001
+
+saveFluid 1
+
+#see kernelConstructTEST5_3, perturbation
+pressureparameters  0.004 1 0
+
+#Prefix for the output files. The directory where the data is saved
+#should exist before running fluam
+outputname		../data/run3
