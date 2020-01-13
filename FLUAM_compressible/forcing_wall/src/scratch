@@ -1,0 +1,5 @@
+  sXY  = 0.125 * ((density4 + density)  * vy  + (densitypxpy + density3)    * vy3)    * (vx  + vx4);
+  sXY -= 0.125 * ((density  + density1) * vy1 + (density3    + densitypxmy) * vypxmy) * (vx1 + vx);
+
+  sXY -= shearviscosityGPU * (invdyGPU * (vx4 - vx) + invdxGPU * (vy3 - vy));
+  sXY += shearviscosityGPU * (invdyGPU * (vx - vx1) + invdxGPU * (vypxmy - vy1));

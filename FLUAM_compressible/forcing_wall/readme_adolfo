@@ -1,0 +1,19 @@
+#Datos que hay que extraer
+En el archivo output, la posicion y velocidad de la pared esta escrita en el formato
+"wall"  t    x     v
+donde 
+   "wall" es un string
+    t->tiempo
+    x->posicion
+    v->velocidad
+
+La fuerza tambien esta escrita en el archivo output en el formato
+"force"  t   Fvisc   Fpol   Fext   Fk   Ftot
+dodne
+    "force" es un string
+     t -> tiempo
+     Fvisc -> Fuerza del fluido sobre la pared (calculada con el gradiente de velocidad)
+     Fpol  -> Fuerza del ADN sobre la pared
+     Fext  -> Fuerza externa aplicada sobre la pared
+     Fk    -> Fuerza del muelle sobre la pared
+     Ftot  -> La suma de las anteriores
