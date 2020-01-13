@@ -1,0 +1,57 @@
+setDevice 1
+#Chose scheme
+stokesLimit
+particles		1
+colors 			1
+bigSystem 1
+
+
+#Cutoff for the particle-particle interaction
+cutoff                  2
+#Give file with the bonded force between particles (see fluam/bin/inputfile/README)
+bondedForces	    	        multiblob.bonds
+
+#Maximum number of particles in the neighbor list
+maxNumberPartInCellNonBonded    100
+maxNumberPartInCell     	100
+
+#Fluid density
+densfluid               1
+#Shear viscosity
+shearviscosity          1
+#Temperature in energy units (T -> k_B*T)
+temperature             1
+
+
+#Number of fluid cells in the directions x, y and z
+cells			128	128	128
+#Dimensions of the simulation box
+celldimension	   	128.0      128.0	128.0
+
+
+#Fluid initial conditions
+#initfluid=0, initial velocity=backgroundvelocity and density=density_0
+#initfluid=1, initial velocity=backgroundvelocity+randomFluctuations and density=density_0
+#See file fluam/src/initializeFluid.cpp
+initfluid 1
+
+
+#To give an initial configuration for the particles
+#set loadparticles to 1 and provide the file for initial configuration
+loadparticles		1
+coordinates		multiblob.pos
+
+#Number of relaxation steps during which fluam save no data
+numstepsRelaxation	0
+#Number of steps (no counting numstepsRelaxation)
+numsteps                1000
+#Save data every samplefreq steps
+samplefreq              100
+
+#Time step
+dt			0.0001
+
+
+#Prefix for the output files. The directory where the data is saved
+#should exist before running fluam
+outputname		../data/run1

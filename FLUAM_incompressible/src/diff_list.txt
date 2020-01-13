@@ -1,0 +1,2453 @@
+checkVelocity.cu
+28a29
+> 					  //int* bondsIndexParticleFixedParticleGPU,
+46a48
+>   //bFV->bondsIndexParticleFixedPointGPU  = bondsIndexParticleFixedPointGPU;
+58c60
+< //*!R Upoad all to the GPU and link to the struct!
+---
+> //!R Upoad all to the GPU and link to the struct!
+123a126,129
+>   /*int aux[np];
+>   for(int i=0;i<np;i++)
+>   aux[i]=0;*/
+> 
+128,130c134,136
+<   cutilSafeCall(cudaMalloc((void**)&bondsIndexParticleParticleGPU,nbondsParticleParticle*2*sizeof(int)));
+<   cutilSafeCall(cudaMalloc((void**)&r0ParticleParticleGPU,nbondsParticleParticle*2*sizeof(double)));
+<   cutilSafeCall(cudaMalloc((void**)&kSpringParticleParticleGPU,nbondsParticleParticle*2*sizeof(double)));
+---
+>   cutilSafeCall(cudaMalloc((void**)&bondsIndexParticleParticleGPU,nbondsParticleParticle*sizeof(int)));
+>   cutilSafeCall(cudaMalloc((void**)&r0ParticleParticleGPU,nbondsParticleParticle*sizeof(double)));
+>   cutilSafeCall(cudaMalloc((void**)&kSpringParticleParticleGPU,nbondsParticleParticle*sizeof(double)));
+138c144
+< 			   nbondsParticleParticle*2*sizeof(int),cudaMemcpyHostToDevice));
+---
+> 			   nbondsParticleParticle*sizeof(int),cudaMemcpyHostToDevice));
+140c146
+< 			   nbondsParticleParticle*2*sizeof(double),cudaMemcpyHostToDevice));
+---
+> 			   nbondsParticleParticle*sizeof(double),cudaMemcpyHostToDevice));
+142c148
+< 			   nbondsParticleParticle*2*sizeof(double),cudaMemcpyHostToDevice));
+---
+> 			   nbondsParticleParticle*sizeof(double),cudaMemcpyHostToDevice));
+150a157
+>   //cutilSafeCall(cudaMalloc((void**)&bondsIndexParticleFixedPointGPU,nbondsParticleFixedPoint*sizeof(int)));
+161a169,170
+>   //cutilSafeCall(cudaMemcpy(bondsIndexParticleFixedPointGPU,bondsIndexParticleFixedPoint,
+>   //		   nbondsParticleFixedPoint*sizeof(int),cudaMemcpyHostToDevice));
+175a185,193
+>   /*cutilSafeCall(cudaMemcpy(bondsParticleParticleGPU,aux,np*sizeof(int),cudaMemcpyHostToDevice));
+>   cutilSafeCall(cudaMemcpy(bondsParticleParticleOffsetGPU,aux,
+> 			   np*sizeof(int),cudaMemcpyHostToDevice));
+>   cutilSafeCall(cudaMemcpy(bondsIndexParticleParticleGPU,aux,
+>   nbondsParticleParticle*sizeof(int),cudaMemcpyHostToDevice));*/
+> 
+> 
+> 
+> 
+183a202
+> 				     //bondsIndexParticleFixedPointGPU,
+
+
+createBoundaries4ptGPU.cu
+3c3
+<   //*!R new parameter
+<   cutilSafeCall(cudaMemcpyToSymbol(confinementZGPU,&confinementZ,sizeof(bool)));
+<   cutilSafeCall(cudaMemcpyToSymbol(confinementZKGPU,&confinementZK,sizeof(double)));
+< 
+
+createBoundariesGPU.cu
+3c3
+<   //*!R new parameter
+<   cutilSafeCall(cudaMemcpyToSymbol(confinementZGPU,&confinementZ,sizeof(bool)));
+<   cutilSafeCall(cudaMemcpyToSymbol(confinementZKGPU,&confinementZK,sizeof(double)));
+34d30
+< 
+
+createBoundariesRK2GPU.cu
+<   //*!R new parameter
+<   cutilSafeCall(cudaMemcpyToSymbol(confinementZGPU,&confinementZ,sizeof(bool)));
+<   cutilSafeCall(cudaMemcpyToSymbol(confinementZKGPU,&confinementZK,sizeof(double)));
+< 
+
+
+createCellsIncompressibleGPU.cu
+149c149
+<   if(quasiNeutrallyBuoyant || quasiNeutrallyBuoyant2D || quasiNeutrallyBuoyant4pt2D || quasi2D){
+---
+>   if(quasiNeutrallyBuoyant || quasiNeutrallyBuoyant2D || quasiNeutrallyBuoyant4pt2D){
+159a160,182
+>   /* CODE MODIFIED by Marc */
+>   cutilSafeCall(cudaMemcpyToSymbol(stokesFlowAmpGPU     ,&stokesFlowAmp     ,sizeof(double)));
+>   cutilSafeCall(cudaMemcpyToSymbol(stokesFlowFreqGPU     ,&stokesFlowFreq     ,sizeof(double)));
+>   cutilSafeCall(cudaMemcpyToSymbol(stokesFlowTimeGPU     ,&stokesFlowTime     ,sizeof(double)));
+> 
+>   cutilSafeCall(cudaMemcpyToSymbol(nwall1GPU     , &nwall1     ,sizeof(int)));
+>   cutilSafeCall(cudaMemcpyToSymbol(nwall2GPU     , &nwall2     ,sizeof(int)));
+>   cutilSafeCall(cudaMemcpyToSymbol(nwall3GPU     , &nwall3     ,sizeof(int)));
+>   cutilSafeCall(cudaMemcpyToSymbol(kwall1GPU     , &kwall1     ,sizeof(double)));
+>   cutilSafeCall(cudaMemcpyToSymbol(kwall2GPU     , &kwall2     ,sizeof(double)));
+>   cutilSafeCall(cudaMemcpyToSymbol(kwall3GPU     , &kwall3     ,sizeof(double)));
+>   cutilSafeCall(cudaMemcpyToSymbol(zwall1GPU     , &zwall1     ,sizeof(double)));
+>   cutilSafeCall(cudaMemcpyToSymbol(zwall2GPU     , &zwall2     ,sizeof(double)));
+>   cutilSafeCall(cudaMemcpyToSymbol(zwall3GPU     , &zwall3     ,sizeof(double)));
+>   /* END OF MODIFICATION by Marc */
+> 
+>   //!*R upload shear perturbation parameters
+>   cutilSafeCall(cudaMemcpyToSymbol(perturbationGPU     ,&perturbation     ,sizeof(bool )));
+>   cutilSafeCall(cudaMemcpyToSymbol(perturbationPlaneGPU,&perturbationPlane,sizeof(int  )));
+>   cutilSafeCall(cudaMemcpyToSymbol(perturbationDirGPU  ,&perturbationDir  ,sizeof(int  )));
+>   cutilSafeCall(cudaMemcpyToSymbol(perturbationAGPU    ,&perturbationA    ,sizeof(float)));
+>   cutilSafeCall(cudaMemcpyToSymbol(perturbationKGPU    ,&perturbationK    ,sizeof(float)));
+> 
+
+createParticles.cpp
+59,64c59
+<     if(quasiNeutrallyBuoyant2D or quasiNeutrallyBuoyant4pt2D or quasi2D or stokesLimit2D){
+<       simpleCubic(2);
+<     }
+<     else{
+<       simpleCubic(3);
+<     }
+---
+>     simpleCubic();
+158,160d152
+<   else if(quasi2D){
+<     volumeParticle = 4;
+<   }
+
+
+deltaGPU.cu
+114,117c114,117
+< __device__ double GaussianKernel2DGPU(double r2, double GaussianVariance){
+<   double pi = 3.1415926535897932385;
+<   return exp(-r2 / (2.0 * GaussianVariance)) / (2 * pi * GaussianVariance);  
+< }
+---
+> 
+> 
+> 
+> 
+
+firstStepQuasiNeutrallyBuoyant.cu
+147c147
+< 										    tPBV);    
+---
+> 										    tPBV, step*dt);    
+689c689
+< 										    tPBV);    
+---
+> 										    tPBV, step*dt);    
+
+fluid.h
+36,44d35
+< //EXTERN_FLUID double concentration;
+< //Raul added. Saffman cut off wave number for quasi2D kernel and viscosity measure for quasi2D run scheme.
+< EXTERN_FLUID double saffmanCutOffWaveNumber;
+< EXTERN_FLUID double saffmanLayerWidth;
+< 
+< EXTERN_FLUID double viscosityMeasureAmplitude;
+< EXTERN_FLUID double viscosityMeasureMode;
+< EXTERN_FLUID int viscosityMeasurePlane;
+< EXTERN_FLUID int viscosityMeasureDir;
+45a37,50
+> /* CODE MODIFIED by Marc */
+> EXTERN_FLUID double stokesFlowFreq;
+> EXTERN_FLUID double stokesFlowAmp;
+> EXTERN_FLUID double stokesFlowTime;
+> EXTERN_FLUID int nwall1, nwall2, nwall3;
+> EXTERN_FLUID double kwall1, kwall2, kwall3;
+> EXTERN_FLUID double zwall1, zwall2, zwall3;
+> /* END OF MODIFICATION by Marc */
+> 
+> EXTERN_FLUID bool  perturbation;
+> EXTERN_FLUID int   perturbationPlane;
+> EXTERN_FLUID int   perturbationDir;
+> EXTERN_FLUID float perturbationA;
+> EXTERN_FLUID float perturbationK;   
+47a53
+> //EXTERN_FLUID double concentration;
+
+forceBondedGPU.cu
+20,135d19
+< __device__ void harmonic_spring(double r0, double kSpring, double rx, double ry, double rz, double x,
+< 			   double y, double z, double &fx, double &fy, double &fz){
+<   double r = sqrt( (x-rx)*(x-rx) + (y-ry)*(y-ry) + (z-rz)*(z-rz) );
+<   if(r>0){//If r=0 -> f=0
+<     fx += -kSpring * (1 - r0/r) * (rx - x);
+<     fy += -kSpring * (1 - r0/r) * (ry - y);
+<     fz += -kSpring * (1 - r0/r) * (rz - z);
+<   }
+< }
+< 
+< __device__ void fene_spring(double rinf, double kSpring, double rx, double ry, double rz, double x, double y,
+< 		       double z,double &fx, double &fy, double &fz){
+<   double r2 = ( (x-rx)*(x-rx) + (y-ry)*(y-ry) + (z-rz)*(z-rz) );
+<   if(r2>0){//If r=0 -> f=0
+<     double rinf2 = rinf*rinf;
+<     if(r2>=rinf2) printf("ERROR IN FENE FORCE, R > RINF!!!!, r=%.3f   rinf= %.3f\n", sqrt(r2), rinf);
+<     double A = -kSpring/(1 - r2/rinf2); 
+<     fx += A * (rx - x);
+<     fy += A * (ry - y);
+<     fz += A * (rz - z);
+<   }
+<   
+< 
+< }
+< 
+< 
+< __device__ void forceBondedParticleParticleGPU(const int i,
+< 					       double& fx, //Pass by reference
+< 					       double& fy,
+< 					       double& fz,
+< 					       const double rx,
+< 					       const double ry,
+< 					       const double rz,
+< 					       const bondedForcesVariables* bFV){
+< 
+< 
+<  double x, y, z;
+<   double r, r0;
+<   double kSpring;
+<   int index;
+< 
+<   //Particle-Particle Force
+<   int nBonds = bFV->bondsParticleParticleGPU[i];
+<   int offset = bFV->bondsParticleParticleOffsetGPU[i];
+<   
+<   
+<   for(int j=0;j<nBonds;j++){
+< 
+<     index = bFV->bondsIndexParticleParticleGPU[offset + j];
+< 
+<     //Particle bonded coordinates
+<     x = fetch_double(texrxboundaryGPU,nboundaryGPU+index);
+<     y = fetch_double(texryboundaryGPU,nboundaryGPU+index);
+<     z = fetch_double(texrzboundaryGPU,nboundaryGPU+index);
+<     
+<     r0 = (int) bFV->r0ParticleParticleGPU[offset+j];
+< 	
+< 
+<  
+<     //Spring constant
+<     kSpring = bFV->kSpringParticleParticleGPU[offset+j];
+< 
+<     harmonic_spring(r0,kSpring,rx,ry,rz,x,y,z,fx,fy,fz);
+<     //fene_spring(r0,kSpring,rx,ry,rz,x,y,z,fx,fy,fz);
+< 
+<   }
+< 
+< 
+< 
+< 
+< 
+< 
+< 
+< 
+< 
+< 
+< 
+<   //Particle-FixedPoint Force
+<   nBonds = bFV->bondsParticleFixedPointGPU[i];
+<   offset = bFV->bondsParticleFixedPointOffsetGPU[i];
+<   
+<   
+<   for(int j=0;j<nBonds;j++){
+<     
+< 
+<     //Fixed point coordinates
+<     x = bFV->rxFixedPointGPU[offset+j];
+<     y = bFV->ryFixedPointGPU[offset+j];
+<     z = bFV->rzFixedPointGPU[offset+j];
+<     
+<     //Equilibrium distance 
+<     r0 = bFV->r0ParticleFixedPointGPU[offset+j];
+< 
+<     //Spring constant
+<     kSpring = bFV->kSpringParticleFixedPointGPU[offset+j];
+<     
+<     if(r0==0){
+<       fx += -kSpring * (rx - x);
+<       fy += -kSpring * (ry - y);
+<       fz += -kSpring * (rz - z);
+<     }  
+<     else{     //If r0!=0 calculate particle particle distance
+<       r = sqrt( (x-rx)*(x-rx) + (y-ry)*(y-ry) + (z-rz)*(z-rz) );
+<       if(r>0){//If r=0 -> f=0
+< 	fx += -kSpring * (1 - r0/r) * (rx - x);
+< 	fy += -kSpring * (1 - r0/r) * (ry - y);
+< 	fz += -kSpring * (1 - r0/r) * (rz - z);
+<       }
+<     }
+<   }
+< 
+<     
+< }
+< 
+< 
+< 
+214a99
+>       /* Harmonic bond (deactivated)
+219c104
+<       
+---
+>       */
+226a112
+>       /* Harmonic bonds (deactivated)
+240c126
+<       
+---
+>       */
+246a133
+>       /* Harmonic bond (deactivated)
+252c139
+<             
+---
+>       */
+259a147,261
+> 
+> 
+> 
+> __device__ void forceBondedParticleParticleGPU(const int i,
+> 					       double& fx, //Pass by reference
+> 					       double& fy,
+> 					       double& fz,
+> 					       const double rx,
+> 					       const double ry,
+> 					       const double rz,
+> 					       const bondedForcesVariables* bFV){	
+> 
+>   double x, y, z;
+>   double r, r0;
+>   double kSpring;
+>   int index;
+> 
+> 
+>   //Particle-Particle Force
+>   int nBonds = bFV->bondsParticleParticleGPU[i];
+>   int offset = bFV->bondsParticleParticleOffsetGPU[i];
+>   
+>   
+>   for(int j=0;j<nBonds;j++){
+> 
+>     index = bFV->bondsIndexParticleParticleGPU[offset + j];
+> 
+>     //if(i==0) index=1;
+>     //if(i==1) index=0;
+> 
+> 
+>     //Particle bonded coordinates
+>     x = fetch_double(texrxboundaryGPU,nboundaryGPU+index);
+>     y = fetch_double(texryboundaryGPU,nboundaryGPU+index);
+>     z = fetch_double(texrzboundaryGPU,nboundaryGPU+index);
+>     
+>     //Equilibrium distance 
+>     r0 = bFV->r0ParticleParticleGPU[offset+j];
+>     
+>     //Spring constant
+>     kSpring = bFV->kSpringParticleParticleGPU[offset+j];
+> 
+>     double rxx = rx-x;
+>     rxx -= floorf(rxx/lxGPU+0.5)*lxGPU;
+>     double ryy = ry-y;
+>     ryy -= floorf(ryy/lyGPU+0.5)*lyGPU;
+>     double rzz = rz-z;
+>     rzz -= floorf(rzz/lzGPU+0.5)*lzGPU;
+>     
+>     if(r0==0){
+>       fx += -kSpring * rxx;
+>       fy += -kSpring * ryy;
+>       fz += -kSpring * rzz;
+>     }
+>     else{     //If r0!=0 calculate particle particle distance
+>       r = sqrt(rxx*rxx+ryy*ryy+rzz*rzz);      
+>       if(r>0){//If r=0 -> f=0
+> 	fx += -kSpring * (1 - r0/r) * rxx;
+> 	fy += -kSpring * (1 - r0/r) * ryy;
+> 	fz += -kSpring * (1 - r0/r) * rzz;
+>       }
+>     }
+>   }
+> 
+> 
+>   //Particle-FixedPoint Force
+>   nBonds = bFV->bondsParticleFixedPointGPU[i];
+>   offset = bFV->bondsParticleFixedPointOffsetGPU[i];
+>   
+>   
+>   for(int j=0;j<nBonds;j++){
+>     
+> 
+>     //Fixed point coordinates
+>     x = bFV->rxFixedPointGPU[offset+j];
+>     y = bFV->ryFixedPointGPU[offset+j];
+>     z = bFV->rzFixedPointGPU[offset+j];
+>     
+>     //Equilibrium distance 
+>     r0 = bFV->r0ParticleFixedPointGPU[offset+j];
+> 
+>     //Spring constant
+>     kSpring = bFV->kSpringParticleFixedPointGPU[offset+j];
+>     
+>     if(r0==0){
+>       fx += -kSpring * (rx - x);
+>       fy += -kSpring * (ry - y);
+>       fz += -kSpring * (rz - z);
+>     }  
+>     else{     //If r0!=0 calculate particle particle distance
+>       r = sqrt( (x-rx)*(x-rx) + (y-ry)*(y-ry) + (z-rz)*(z-rz) );
+>       if(r>0){//If r=0 -> f=0
+> 	fx += -kSpring * (1 - r0/r) * (rx - x);
+> 	fy += -kSpring * (1 - r0/r) * (ry - y);
+> 	fz += -kSpring * (1 - r0/r) * (rz - z);
+>       }
+>     }
+>   }
+> 
+> 
+>   return ;
+> }
+
+freeCellsIncompressibleGPU.cu
+113c113
+<   if(quasiNeutrallyBuoyant || quasiNeutrallyBuoyant2D || quasi2D){
+---
+>   if(quasiNeutrallyBuoyant || quasiNeutrallyBuoyant2D){
+
+GPU.cu
+19a20
+> 
+28a30
+> 
+37,52d38
+< __device__ double atomicAdd(double* address, double val);
+< #if !defined(__CUDA_ARCH__) || __CUDA_ARCH__ >= 600
+< #else 
+< __device__ double atomicAdd(double* address, double val){
+<   unsigned long long int* address_as_ull =
+<     (unsigned long long int*)address;
+<   unsigned long long int old = *address_as_ull, assumed;
+<   do {
+<     assumed = old;
+<     old = atomicCAS(address_as_ull, assumed,
+< 		    __double_as_longlong(val +
+< 					 __longlong_as_double(assumed)));
+<   } while (assumed != old);
+<   return __longlong_as_double(old);
+< }
+< #endif
+54,59c40,41
+< static __inline__ __device__ double fetch_double(texture<int2,1> t, int i){
+<   int2 v = tex1Dfetch(t,i);
+<   return __hiloint2double(v.y,v.x);
+< }
+< 
+< // GPU staff
+---
+> //GPU staff
+> //#include <cutil_inline.h>
+68a51,56
+> 
+> static __inline__ __device__ double fetch_double(texture<int2,1> t, int i){
+>   int2 v = tex1Dfetch(t,i);
+>   return __hiloint2double(v.y,v.x);
+> }
+> 
+207a196
+> 
+280,298d268
+< //SchemeStokesLimitBigSystem
+< #include "createBoundariesRK2BigSystemGPU.cu"
+< #include "freeBoundariesRK2BigSystemGPU.cu"
+< #include "stokesLimitFunctionsBigSystem.cu"
+< #include "boundaryParticlesFunctionStokesLimitBigSystem.cu"
+< #include "runSchemeStokesLimitBigSystem.cu"
+< 
+< 
+< //SchemeQuasi2D
+< // #include "boundaryParticlesFunctionQuasi2D.cu"
+< #include "createCellsQuasi2DGPU.cu"
+< #include "freeCellsQuasi2DGPU.cu"
+< #include "createBoundariesQuasi2DGPU.cu"
+< #include "freeBoundariesQuasi2DGPU.cu"
+< #include "quasi2DFunctions.cu"
+< #include "texturesCellsQuasi2D.cu"
+< #include "runSchemeQuasi2D.cu"
+< 
+< 
+
+gpuVariables.cu
+29,32d28
+< //Raul Added. GPU version of Saffman cut off
+< __constant__ double saffmanCutOffWaveNumberGPU;
+< __constant__ double saffmanLayerWidthGPU;
+< 
+128d123
+< __constant__ bool LJParameterFileProvidedGPU;
+129a125,140
+> //!*R shear parameters, look in kernelConstructQuasiNeutrallyBuoyant.cu line 1473
+> __constant__ bool perturbationGPU;
+> __constant__ int perturbationPlaneGPU;
+> __constant__ int perturbationDirGPU;
+> __constant__ float perturbationAGPU;
+> __constant__ float perturbationKGPU;
+> 
+> 
+> /* CODE MODIFIED by Marc */
+> __constant__ double stokesFlowFreqGPU;
+> __constant__ double stokesFlowAmpGPU;
+> __constant__ double stokesFlowTimeGPU;
+> __constant__ int nwall1GPU, nwall2GPU, nwall3GPU;
+> __constant__ double kwall1GPU, kwall2GPU, kwall3GPU;
+> __constant__ double zwall1GPU, zwall2GPU, zwall3GPU;
+> /* END OF MODIFICATION by Marc */
+244d261
+< vecinos *pVecinos, *pNeighbors;
+426,428d442
+<   //*!R new parameter
+< __constant__ bool confinementZGPU;
+< __constant__ double confinementZKGPU;
+430,431c444
+< __constant__ int kernelWidthGPU, nDriftGPU;
+< __constant__ double GaussianVarianceGPU, deltaRFDGPU;
+---
+> 
+
+
+header.h
+29,32d28
+< namespace space_saveFluidVTK{
+<   bool saveFluidVTK(int option);
+< }
+< using namespace space_saveFluidVTK;
+48c44
+< EXTERN_GLOBAL int samplefreq, savefreq, sampleHydroGrid;
+---
+> EXTERN_GLOBAL int samplefreq, savefreq;
+70,74c66
+< 
+< 
+< EXTERN_GLOBAL bool computeNonBondedForces, use_RFD, bigSystem;
+< EXTERN_GLOBAL double hydrodynamicRadius;
+< EXTERN_GLOBAL int nDrift;
+---
+> EXTERN_GLOBAL bool computeNonBondedForces;
+85,86d76
+< bool initializeBondedForcesOldVersion();
+< 
+116d105
+< // bool space_saveFluidVTK::saveFluidVTK(int option);
+132c121
+< void simpleCubic(const int dimension);
+---
+> void simpleCubic();
+245,253c234
+< //SchemeQuasi2D
+< bool createCellsQuasi2DGPU();
+< bool freeCellsQuasi2DGPU();
+< bool createBoundariesQuasi2DGPU();
+< bool freeBoundariesQuasi2DGPU();
+< bool schemeQuasi2D();
+< bool freeMemoryQuasi2D();
+< bool runSchemeQuasi2D();
+<  
+---
+> 
+317c298
+< bool saveFunctionsSchemeStokesLimit(int index, long long step, int samplefreq);
+---
+> bool saveFunctionsSchemeStokesLimit(int index, long long step);
+321,331d301
+< bool freeMemoryStokesLimit();
+< 
+< 
+< 
+< //stokesLimitBigSystem
+< bool schemeStokesLimitBigSystem(); 
+< bool freeMemoryStokesLimitBigSystem(); 
+< bool createBoundariesRK2BigSystemGPU(); 
+< bool freeBoundariesRK2BigSystemGPU(); 
+< bool runSchemeStokesLimitBigSystem(); 
+< 
+333,334d302
+< // quasi2D
+< bool calculateConcentration(int index, long long step);
+headerOtherFluidVariables.h
+3c3
+< // Copyright (c) 2010-2017, Florencio Balboa Usabiaga
+---
+> // Copyright (c) 2010-2015, Florencio Balboa Usabiaga
+82,87d81
+< //quasi2D Begins
+< EXTERN_OTHER_FLUID_V bool quasi2D;
+< EXTERN_OTHER_FLUID_V bool stokesLimit2D;
+< EXTERN_OTHER_FLUID_V bool predictorCorrector;
+< //quasi2D Ends
+< 
+104,109d97
+< 
+< //Confinement Begins
+< EXTERN_OTHER_FLUID_V bool confinementZ;
+< EXTERN_OTHER_FLUID_V double confinementZK;
+< //Confinement Ends
+< 
+
+initForcesNonBonded.cu
+31,33c31,33
+<   float sigma, epsilon;
+<   sigma = 2 * lx / double(mx);
+<   epsilon = temperature ;
+---
+>   //  float sigma, epsilon;
+>   //sigma = 2 * lx / double(mx);
+>   //epsilon = temperature ;
+48c48
+<   double *Aij_param;  
+---
+>   double *Aij_param;
+50,62c50,57
+<   Aij_param = new double[ntypes*ntypes];
+<   Bij_param = new double[ntypes*ntypes];
+<     
+<   if(false/* || loadparticles==0*/){ //Always reads from the file
+<     for(int i=0; i<ntypes; i++){
+<       for(int j=0; j<ntypes; j++){
+<         float sigma, epsilon;
+<         sigma = 2 * lx / float(mx); //READ FROM FILE
+<         epsilon = temperature;
+< 	Aij_param[i+ntypes*j] = 48.0f * pow(sigma,12)*epsilon;
+<         Bij_param[i+ntypes*j] = 48.0f * pow(sigma,6)*0.5*epsilon;
+<       }
+<     }
+---
+>   if(true){ //HELIX: Dont use types, helices interact only when their types are different, but in the same way
+>     Aij_param = new double;
+>     Bij_param = new double;
+>     //    float sigma, epsilon;
+>     //sigma = 2 * lx / float(mx); //READ FROM FILE
+>     //epsilon = temperature;
+>     *Aij_param = 0.0;//48.0f * pow(sigma,12)*epsilon;
+>     *Bij_param = 0.0;// 48.0f * pow(sigma,6)*0.5*epsilon;
+64,74c59,65
+<   else{
+<     ifstream in(LJParameterFile);
+<     LJParameterFileProvided = false;
+<     if(in.good()){
+<       LJParameterFileProvided = true;
+<       in>>ntypes;
+<       Aij_param = new double[ntypes*ntypes];
+<       Bij_param = new double[ntypes*ntypes];
+<       for(int i=0; i<ntypes; i++)for(int j=0; j<ntypes; j++){
+< 	  in>>Aij_param[i+ntypes*j];
+< 	}
+---
+>   else{    
+>      ifstream in("LJ.in");
+>      in>>ntypes;
+>      Aij_param = new double[ntypes*ntypes];
+>      Bij_param = new double[ntypes*ntypes];
+>      for(int i=0; i<ntypes; i++)for(int j=0; j<ntypes; j++)
+> 				  in>>Aij_param[i+ntypes*j];
+76,80c67,72
+<       for(int i=0; i<ntypes; i++)for(int j=0; j<ntypes; j++){
+< 	  in>>Bij_param[i+ntypes*j];
+< 	}
+<     }
+<   }
+---
+>      
+>      for(int i=0; i<ntypes; i++)for(int j=0; j<ntypes; j++)
+> 				  in>>Bij_param[i+ntypes*j];
+>      in>>cutoffnear;
+>    }
+>       
+86a79,83
+>   
+>   //HELIX: be carefull with this
+>   for(int i=1; i<np; i++){
+>     if(particle_types[i]!=particle_types[i-1]) ntypes++;
+>   }
+89,90c86
+<   cudaMemcpyToSymbol(LJParameterFileProvidedGPU, &LJParameterFileProvided, sizeof(bool));
+< 
+---
+>   
+109a106,114
+> 
+>   /*
+>   r = 0.5 * dr;
+>     for(int i=0;i<size;i++){
+>     cout << r << " " << h_data[i] << endl;
+>     r += dr;
+>     }
+>     exit(0);
+> */
+
+
+initializeBondedForces.cpp
+21a22,24
+> //NEW bonded forces
+> 
+> 
+35a39,45
+> const string wnothing="#";
+> 
+> const string wsigma="sigma";
+> const string wrho="rho";
+> const string wsigmap="sigmap";
+> 
+> 
+39c49,51
+<   int index1, index2;
+---
+>   int index1, index2, indexOld;
+>   int nParticleParticleMemory=0;
+>   int nParticleFixedPointMemory=0;
+41a54
+>   indexOld=-1;
+43,47d55
+<   if(bondedForcesVersion){
+<     initializeBondedForcesOldVersion();
+<     return 1;
+<   }
+<   
+52a61
+>   //IMPORTANT, each bonds should be count twice
+59c68
+<   //Initially no particle has bonds
+---
+>   //Initially any particle has bonds
+65c74,84
+<     file >> index1 >> index2 >> trashDouble >> trashDouble;   
+---
+>     file >> index1 >> index2 >> trashDouble >> trashDouble;
+>     //cout << "AAA " << index1 << "   " << index2 << "   " << trashDouble << endl << endl << endl;
+>     if(index1<indexOld){
+>       cout << "ERROR, bad sorting in  bonded Forces Particle-Particle" << endl;
+>       return 0;
+>     }
+>     else if(index1!=indexOld){
+>       bondsParticleParticleOffset[index1]=nParticleParticleMemory;
+>       //nParticleParticleMemory++;//size for the array bondsIndexParticleParticle
+>     }
+>     nParticleParticleMemory++;
+67c86
+<     bondsParticleParticle[index2]++;
+---
+>     indexOld=index1;
+69d87
+<   
+73a92,98
+> 
+> 
+>   
+> 
+> 
+>   indexOld=-1;
+> 
+74a100
+>   //IMPORTANT, each bonds should be count once
+76a103,104
+>   //cout << "BBB " << nbondsParticleFixedPoint << endl << endl << endl;
+> 
+81c109
+<   //Initially no particle has bonds
+---
+>   //Initially any particle has bonds
+87c115,126
+<     file >> index1 >> trashDouble >> trashDouble >> trashDouble >> trashDouble >> trashDouble;
+---
+>     file >> index1 >> trashDouble >> trashDouble >>
+>       trashDouble >> trashDouble >> trashDouble;
+>     //cout << "CCC " << index1 << endl << endl << endl;
+>     if(index1<indexOld){
+>       cout << "ERROR, bad sorting in  bonded Forces Particle-fixedPoint" << endl;
+>       return 0;
+>     }
+>     else if(index1!=indexOld){
+>       bondsParticleFixedPointOffset[index1]=nParticleFixedPointMemory;
+>       //nParticleFixedPointMemory++;
+>     }
+>     nParticleFixedPointMemory++;
+88a128
+>     index1=indexOld;
+90,92c130,131
+<   
+<   //Important, lear how to rewind a file
+<   //CLOSE FILE 
+---
+> 
+>   //CLOSE FILE
+94c133,134
+<   
+---
+> 
+> 
+96,98c136,139
+<   bondsIndexParticleParticle = new int [nbondsParticleParticle * 2];
+<   kSpringParticleParticle = new double [nbondsParticleParticle * 2];
+<   r0ParticleParticle = new double [nbondsParticleParticle * 2];
+---
+>   bondsIndexParticleParticle = new int [nbondsParticleParticle];
+>   kSpringParticleParticle = new double [nbondsParticleParticle];
+>   r0ParticleParticle = new double [nbondsParticleParticle];
+> 
+107,119c148,149
+<   //Compute offset
+<   bondsParticleParticleOffset[0] = 0;
+<   bondsParticleFixedPointOffset[0] = 0;
+<   for(int i=1; i<np; i++){
+<     bondsParticleParticleOffset[i] = bondsParticleParticleOffset[i-1] + bondsParticleParticle[i-1];
+<     bondsParticleFixedPointOffset[i] = bondsParticleFixedPointOffset[i-1] + bondsParticleFixedPoint[i-1];
+<   }
+<   
+<   //Create tmp offset
+<   int *tmpOffset = new int [np];
+<   for(int i=0;i<np;i++){
+<     tmpOffset[i] = 0;
+<   }
+---
+> 
+> 
+123a154,155
+> 
+> 
+124a157
+>   //IMPORTANT, each bonds should be count twice
+126a160,161
+>   //cout << "DDD " << nbondsParticleParticle << endl << endl << endl;
+> 
+128c163,165
+<   double k, r0;
+---
+>   int n=0;
+>   indexOld=-1;
+>   double a, b;
+130c167,172
+<     file >> index1 >> index2 >> k >> r0;
+---
+>     //file >> index1 >> index2 >> a >> b ;
+>     /*bondsIndexParticleParticle[bondsParticleParticleOffset[index1]+n] = index2;
+>     kSpringParticleParticle[   bondsParticleParticleOffset[index1]+n] = a;
+>     r0ParticleParticle[        bondsParticleParticleOffset[index1]+n] = b;*/
+> 
+>     //cout << "EEE " << index1 << "   " << index2 << "   " << a << "   " << b << endl;
+132,144c174,190
+<     // Data for particle index1
+<     bondsIndexParticleParticle[bondsParticleParticleOffset[index1]+tmpOffset[index1]] = index2;
+<     kSpringParticleParticle[   bondsParticleParticleOffset[index1]+tmpOffset[index1]] = k;
+<     r0ParticleParticle[        bondsParticleParticleOffset[index1]+tmpOffset[index1]] = r0;
+< 
+<     // Data for particle index2
+<     bondsIndexParticleParticle[bondsParticleParticleOffset[index2]+tmpOffset[index2]] = index1;
+<     kSpringParticleParticle[   bondsParticleParticleOffset[index2]+tmpOffset[index2]] = k;
+<     r0ParticleParticle[        bondsParticleParticleOffset[index2]+tmpOffset[index2]] = r0;
+< 
+<     // Increase tmpOffset
+<     tmpOffset[index1]++;
+<     tmpOffset[index2]++;
+---
+>     file >> index1;
+>     if(index1==indexOld){
+>       n++;
+>     }
+>     else{
+>       n=0;
+>     }
+>     file >> bondsIndexParticleParticle[bondsParticleParticleOffset[index1]+n]
+> 	 >> kSpringParticleParticle[             bondsParticleParticleOffset[index1]+n]
+> 	 >> r0ParticleParticle[                  bondsParticleParticleOffset[index1]+n];
+>  
+>     /*cout << "FFF " << index1 << "   " 
+> 	 << bondsIndexParticleParticle[bondsParticleParticleOffset[index1]+n] << "   "
+> 	 << kSpringParticleParticle[             bondsParticleParticleOffset[index1]+n] << "   "
+> 	 << r0ParticleParticle[                  bondsParticleParticleOffset[index1]+n] << "   "
+> 	 << endl << endl;*/
+>     indexOld=index1;
+147,150c193
+<   // Reset tmp offset to zero for particle-fixed point interactions
+<   for(int i=0;i<np;i++){
+<     tmpOffset[i] = 0;
+<   }
+---
+> 
+152a196
+>   //IMPORTANT, each bonds should be count once
+155a200,201
+>   n=0;
+>   indexOld=-1;
+157,161c203,214
+<     file >> index1 >> kSpringParticleFixedPoint[bondsParticleFixedPointOffset[index1]+tmpOffset[index1]]
+< 	 >> r0ParticleFixedPoint[               bondsParticleFixedPointOffset[index1]+tmpOffset[index1]]
+< 	 >> rxFixedPoint[                       bondsParticleFixedPointOffset[index1]+tmpOffset[index1]]
+< 	 >> ryFixedPoint[                       bondsParticleFixedPointOffset[index1]+tmpOffset[index1]]
+< 	 >> rzFixedPoint[                       bondsParticleFixedPointOffset[index1]+tmpOffset[index1]];
+---
+>     file >> index1;
+>     if(index1==indexOld){
+>       n++;
+>     }
+>     else{
+>       n=0;
+>     }
+>     file >> kSpringParticleFixedPoint[             bondsParticleFixedPointOffset[index1]+n]
+> 	 >> r0ParticleFixedPoint[                  bondsParticleFixedPointOffset[index1]+n]
+> 	 >> rxFixedPoint[                          bondsParticleFixedPointOffset[index1]+n]
+> 	 >> ryFixedPoint[                          bondsParticleFixedPointOffset[index1]+n]
+> 	 >> rzFixedPoint[                          bondsParticleFixedPointOffset[index1]+n];
+163,164c216
+<     // Increase tmpOffset
+<     tmpOffset[index1]++;
+---
+>     indexOld=index1;
+166a219,221
+> 
+> 
+> 
+170,172c225,240
+<   // Free tmpOffset
+<   delete[] tmpOffset;
+<   
+---
+>   cout << "nParticleParticeMemory    " << nParticleParticleMemory << endl;
+>   /*for(int i=0;i<np;i++){
+>     cout << "Particle     " << i << endl;
+>     cout << "number bonds " << bondsParticleParticle[i] << endl;
+>     cout << "offset       " << bondsParticleParticleOffset[i] << endl;
+>     for(int j=0;j<bondsParticleParticle[i];j++){
+>       cout << "link " << j << " index "<<bondsIndexParticleParticle[bondsParticleParticleOffset[i] + j]<<endl;
+>       cout << "link " << j << " k     "<<kSpringParticleParticle[bondsParticleParticleOffset[i] + j] << endl;
+>       cout << "link " << j << " r0    "<< r0ParticleParticle[bondsParticleParticleOffset[i] + j] << endl; 
+>     }
+>     cout << endl << endl;
+>     }*/
+> 
+> 
+> 
+> 
+202a271
+> 
+219a289,292
+> 		  if(particle>=np){
+> 	cerr<<"ERROR: particle ("<<particle<<") index greater than number of particles ("<<np<<") in "<<threeBondedForcesFile.c_str()<<endl;
+> 	exit(1);
+> }
+258a332
+>   cout<<"THREE BONDED SPRINGS DONE!!!"<<endl;
+261d334
+<   cout<<"THREE BONDED SPRINGS DONE!!!"<<endl;
+
+  
+initializeFluidIncompressibleGPU.cu
+27c27
+<   if(quasiNeutrallyBuoyant || quasiNeutrallyBuoyant2D || quasiNeutrallyBuoyant4pt2D || stokesLimit || quasi2D){
+---
+>   if(quasiNeutrallyBuoyant || quasiNeutrallyBuoyant2D || quasiNeutrallyBuoyant4pt2D || stokesLimit){
+
+initializeNeighborsGPU.cu
+262,500d261
+< 
+< 
+< 
+< 
+< 
+< 
+< 
+< 
+< 
+< __global__ void initializeNeighborsFull(int* neighbor0GPU, 
+< 					int* neighbor1GPU, 
+< 					int* neighbor2GPU, 
+< 					int* neighbor3GPU, 
+< 					int* neighbor4GPU, 
+< 					int* neighbor5GPU, 
+< 					int* neighborpxpyGPU, 
+< 					int* neighborpxmyGPU, 
+< 					int* neighborpxpzGPU, 
+< 					int* neighborpxmzGPU,
+< 					int* neighbormxpyGPU, 
+< 					int* neighbormxmyGPU, 
+< 					int* neighbormxpzGPU, 
+< 					int* neighbormxmzGPU,
+< 					int* neighborpypzGPU, 
+< 					int* neighborpymzGPU, 
+< 					int* neighbormypzGPU, 
+< 					int* neighbormymzGPU,
+< 					int* neighborpxpypzGPU, 
+< 					int* neighborpxpymzGPU, 
+< 					int* neighborpxmypzGPU, 
+< 					int* neighborpxmymzGPU,
+< 					int* neighbormxpypzGPU, 
+< 					int* neighbormxpymzGPU, 
+< 					int* neighbormxmypzGPU, 
+< 					int* neighbormxmymzGPU,
+< 					vecinos* pNeighbors){
+< 
+<   int i = blockDim.x * blockIdx.x + threadIdx.x;
+<   if(i>=mNeighborsGPU) return;
+< 
+<   int mxmy = mxNeighborsGPU * myNeighborsGPU; 
+<   int neighbor0, neighbor1, neighbor2, neighbor3, neighbor4, neighbor5;
+<   {
+<     int fz = i/(mxNeighborsGPU*myNeighborsGPU);
+<     int fy = (i % (mxNeighborsGPU*myNeighborsGPU))/mxNeighborsGPU;
+<     int fx = i%mxNeighborsGPU;
+< 
+<     int fzp1 = ((fz+1) % mzNeighborsGPU);
+<     int fzm1 = ((fz-1+mzNeighborsGPU) % mzNeighborsGPU);      
+<     int fyp1 = ((fy+1) % myNeighborsGPU);
+<     int fym1 = ((fy-1+myNeighborsGPU) % myNeighborsGPU);
+<     int fxp1 = ((fx+1) % mxNeighborsGPU);
+<     int fxm1 = ((fx-1+mxNeighborsGPU) % mxNeighborsGPU);
+<     
+<     neighbor0 = fzm1 * mxmy + fy   * mxNeighborsGPU + fx;
+<     neighbor1 = fz   * mxmy + fym1 * mxNeighborsGPU + fx;
+<     neighbor2 = fz   * mxmy + fy   * mxNeighborsGPU + fxm1;
+<     neighbor3 = fz   * mxmy + fy   * mxNeighborsGPU + fxp1;
+<     neighbor4 = fz   * mxmy + fyp1 * mxNeighborsGPU + fx;
+<     neighbor5 = fzp1 * mxmy + fy   * mxNeighborsGPU + fx;
+<     
+<     
+<   }
+< 
+<   neighbor0GPU[i] = neighbor0;
+<   neighbor1GPU[i] = neighbor1;
+<   neighbor2GPU[i] = neighbor2;
+<   neighbor3GPU[i] = neighbor3;
+<   neighbor4GPU[i] = neighbor4;
+<   neighbor5GPU[i] = neighbor5;  
+< 
+<   int neighborpxpy, neighborpxmy, neighborpxpz, neighborpxmz;
+<   int neighbormxpy, neighbormxmy, neighbormxpz, neighbormxmz;
+<   int neighborpypz, neighborpymz, neighbormypz, neighbormymz;
+< 
+<   int neighborpxpypz, neighborpxpymz, neighborpxmypz, neighborpxmymz;
+<   int neighbormxpypz, neighbormxpymz, neighbormxmypz, neighbormxmymz;
+<   
+<   {
+<     //NEIGHBOUR NEIGHBOR3
+<     int fz = neighbor3/mxmy;
+<     int fy = (neighbor3 % mxmy)/mxNeighborsGPU;
+<     int fx = neighbor3 % mxNeighborsGPU;
+<     int fzp1, fzm1, fyp1, fym1;
+<     
+<     fzp1 = ((fz+1) % mzNeighborsGPU) * mxmy;
+<     fzm1 = ((fz-1+mzNeighborsGPU) % mzNeighborsGPU) * mxmy; 
+<     fyp1 = ((fy+1) % myNeighborsGPU) * mxNeighborsGPU;
+<     fym1 = ((fy-1+myNeighborsGPU) % myNeighborsGPU) * mxNeighborsGPU;
+< 
+<     fz = fz * mxmy;
+<     fy = fy * mxNeighborsGPU;
+<     neighborpxmz = fzm1 + fy   + fx;
+<     neighborpxmy = fz   + fym1 + fx;
+< 
+<     neighborpxpy = fz   + fyp1 + fx;
+<     neighborpxpz = fzp1 + fy   + fx;    
+< 
+<     //NEIGHBOUR NEIGHBOR2
+<     fz = neighbor2/mxmy;
+<     fy = (neighbor2 % mxmy)/mxNeighborsGPU;
+<     fx = neighbor2 % mxNeighborsGPU;
+<     fzp1 = ((fz+1) % mzNeighborsGPU) * mxmy;
+<     fzm1 = ((fz-1+mzNeighborsGPU) % mzNeighborsGPU) * mxmy; 
+<     fyp1 = ((fy+1) % myNeighborsGPU) * mxNeighborsGPU;
+<     fym1 = ((fy-1+myNeighborsGPU) % myNeighborsGPU) * mxNeighborsGPU;
+< 
+<     fz = fz * mxmy;
+<     fy = fy * mxNeighborsGPU;
+<     neighbormxmz = fzm1 + fy   + fx;
+<     neighbormxmy = fz   + fym1 + fx;
+< 
+<     neighbormxpy = fz   + fyp1 + fx;
+<     neighbormxpz = fzp1 + fy   + fx;    
+< 
+<     //NEIGHBOUR NEIGHBOR4
+<     fz = neighbor4/mxmy;
+<     fy = (neighbor4 % mxmy)/mxNeighborsGPU;
+<     fx = neighbor4 % mxNeighborsGPU;
+<     fzp1 = ((fz+1) % mzNeighborsGPU) * mxmy;
+<     fzm1 = ((fz-1+mzNeighborsGPU) % mzNeighborsGPU) * mxmy; 
+< 
+<     fy = fy * mxNeighborsGPU;
+<     neighborpymz = fzm1 + fy   + fx;
+< 
+<     neighborpypz = fzp1 + fy   + fx;    
+< 
+<     //NEIGHBOUR NEIGHBOR1
+<     fz = neighbor1/mxmy;
+<     fy = (neighbor1 % mxmy)/mxNeighborsGPU;
+<     fx = neighbor1 % mxNeighborsGPU;
+<     fzp1 = ((fz+1) % mzNeighborsGPU) * mxmy;
+<     fzm1 = ((fz-1+mzNeighborsGPU) % mzNeighborsGPU) * mxmy; 
+< 
+<     fy = fy * mxNeighborsGPU;
+<     neighbormymz = fzm1 + fy   + fx;
+< 
+<     neighbormypz = fzp1 + fy   + fx;    
+<     
+<     //NEIGHBOUR NEIGHBORPXPY
+<     fz = neighborpxpy/mxmy;
+<     fy = (neighborpxpy % mxmy)/mxNeighborsGPU;
+<     fx = neighborpxpy % mxNeighborsGPU;
+<     fzp1 = ((fz+1) % mzNeighborsGPU) * mxmy;
+<     fzm1 = ((fz-1+mzNeighborsGPU) % mzNeighborsGPU) * mxmy; 
+< 
+<     fy = fy * mxNeighborsGPU;
+<     neighborpxpymz = fzm1 + fy   + fx;
+< 
+<     neighborpxpypz = fzp1 + fy   + fx;    
+<         
+<     //NEIGHBOUR NEIGHBORPXMY
+<     fz = neighborpxmy/mxmy;
+<     fy = (neighborpxmy % mxmy)/mxNeighborsGPU;
+<     fx = neighborpxmy % mxNeighborsGPU;
+<     fzp1 = ((fz+1) % mzNeighborsGPU) * mxmy;
+<     fzm1 = ((fz-1+mzNeighborsGPU) % mzNeighborsGPU) * mxmy; 
+< 
+<     fy = fy * mxNeighborsGPU;
+<     neighborpxmymz = fzm1 + fy   + fx;
+< 
+<     neighborpxmypz = fzp1 + fy   + fx;    
+< 
+<     //NEIGHBOUR NEIGHBORMXPY
+<     fz = neighbormxpy/mxmy;
+<     fy = (neighbormxpy % mxmy)/mxNeighborsGPU;
+<     fx = neighbormxpy % mxNeighborsGPU;
+<     fzp1 = ((fz+1) % mzNeighborsGPU) * mxmy;
+<     fzm1 = ((fz-1+mzNeighborsGPU) % mzNeighborsGPU) * mxmy; 
+< 
+<     fy = fy * mxNeighborsGPU;
+<     neighbormxpymz = fzm1 + fy   + fx;
+< 
+<     neighbormxpypz = fzp1 + fy   + fx;    
+< 
+<     //NEIGHBOUR NEIGHBORMXMY
+<     fz = neighbormxmy/mxmy;
+<     fy = (neighbormxmy % mxmy)/mxNeighborsGPU;
+<     fx = neighbormxmy % mxNeighborsGPU;
+<     fzp1 = ((fz+1) % mzNeighborsGPU) * mxmy;
+<     fzm1 = ((fz-1+mzNeighborsGPU) % mzNeighborsGPU) * mxmy; 
+< 
+<     fy = fy * mxNeighborsGPU;
+<     neighbormxmymz = fzm1 + fy   + fx;
+< 
+<     neighbormxmypz = fzp1 + fy   + fx;    
+<   }  
+<   
+<   neighborpxpyGPU[i] = neighborpxpy;
+<   neighborpxmyGPU[i] = neighborpxmy;
+<   neighborpxpzGPU[i] = neighborpxpz;
+<   neighborpxmzGPU[i] = neighborpxmz;
+<   neighbormxpyGPU[i] = neighbormxpy;
+<   neighbormxmyGPU[i] = neighbormxmy;
+<   neighbormxpzGPU[i] = neighbormxpz;
+<   neighbormxmzGPU[i] = neighbormxmz;
+<   neighborpypzGPU[i] = neighborpypz;
+<   neighborpymzGPU[i] = neighborpymz;
+<   neighbormypzGPU[i] = neighbormypz;
+<   neighbormymzGPU[i] = neighbormymz;
+<   neighborpxpypzGPU[i] = neighborpxpypz;
+<   neighborpxpymzGPU[i] = neighborpxpymz;
+<   neighborpxmypzGPU[i] = neighborpxmypz;
+<   neighborpxmymzGPU[i] = neighborpxmymz;
+<   neighbormxpypzGPU[i] = neighbormxpypz;
+<   neighbormxpymzGPU[i] = neighbormxpymz;
+<   neighbormxmypzGPU[i] = neighbormxmypz;
+<   neighbormxmymzGPU[i] = neighbormxmymz;
+< 
+<   if(i==0){
+<     pNeighbors->vecino0GPU = neighbor0GPU;
+<     pNeighbors->vecino1GPU = neighbor1GPU;
+<     pNeighbors->vecino2GPU = neighbor2GPU;
+<     pNeighbors->vecino3GPU = neighbor3GPU;
+<     pNeighbors->vecino4GPU = neighbor4GPU;
+<     pNeighbors->vecino5GPU = neighbor5GPU;
+<     pNeighbors->vecinopxpyGPU = neighborpxpyGPU;
+<     pNeighbors->vecinopxmyGPU = neighborpxmyGPU;
+<     pNeighbors->vecinopxpzGPU = neighborpxpzGPU;
+<     pNeighbors->vecinopxmzGPU = neighborpxmzGPU;
+<     pNeighbors->vecinomxpyGPU = neighbormxpyGPU;
+<     pNeighbors->vecinomxmyGPU = neighbormxmyGPU;
+<     pNeighbors->vecinomxpzGPU = neighbormxpzGPU;
+<     pNeighbors->vecinomxmzGPU = neighbormxmzGPU;
+<     pNeighbors->vecinopypzGPU = neighborpypzGPU;
+<     pNeighbors->vecinopymzGPU = neighborpymzGPU;
+<     pNeighbors->vecinomypzGPU = neighbormypzGPU;
+<     pNeighbors->vecinomymzGPU = neighbormymzGPU;
+<     pNeighbors->vecinopxpypzGPU = neighborpxpypzGPU;
+<     pNeighbors->vecinopxpymzGPU = neighborpxpymzGPU;
+<     pNeighbors->vecinopxmypzGPU = neighborpxmypzGPU;
+<     pNeighbors->vecinopxmymzGPU = neighborpxmymzGPU;
+<     pNeighbors->vecinomxpypzGPU = neighbormxpypzGPU;
+<     pNeighbors->vecinomxpymzGPU = neighbormxpymzGPU;
+<     pNeighbors->vecinomxmypzGPU = neighbormxmypzGPU;
+<     pNeighbors->vecinomxmymzGPU = neighbormxmymzGPU;
+<   }
+< 
+< }
+
+
+initializeVecinosGPU.cu
+251,486d250
+< 
+< 
+< 
+< 
+< 
+< __global__ void initializeVecinosFull(int* neighbor0GPU,
+< 				      int* neighbor1GPU, 
+< 				      int* neighbor2GPU, 
+< 				      int* neighbor3GPU, 
+< 				      int* neighbor4GPU, 
+< 				      int* neighbor5GPU,
+< 				      int* neighborpxpyGPU, 
+< 				      int* neighborpxmyGPU, 
+< 				      int* neighborpxpzGPU, 
+< 				      int* neighborpxmzGPU,
+< 				      int* neighbormxpyGPU, 
+< 				      int* neighbormxmyGPU, 
+< 				      int* neighbormxpzGPU, 
+< 				      int* neighbormxmzGPU,
+< 				      int* neighborpypzGPU, 
+< 				      int* neighborpymzGPU, 
+< 				      int* neighbormypzGPU, 
+< 				      int* neighbormymzGPU,
+< 				      int* neighborpxpypzGPU, 
+< 				      int* neighborpxpymzGPU, 
+< 				      int* neighborpxmypzGPU, 
+< 				      int* neighborpxmymzGPU,
+< 				      int* neighbormxpypzGPU, 
+< 				      int* neighbormxpymzGPU, 
+< 				      int* neighbormxmypzGPU, 
+< 				      int* neighbormxmymzGPU,
+< 				      vecinos* pNeighbors){
+< 
+<   
+<   int i = blockDim.x * blockIdx.x + threadIdx.x;
+<   if(i>=ncellstGPU) return;
+< 
+<   int mxmy = mxGPU * mytGPU; 
+<   int neighbor0, neighbor1, neighbor2, neighbor3, neighbor4, neighbor5;
+<   {
+<     int fz = i/mxmy;
+<     int fy = (i % mxmy)/mxGPU;
+<     int fx = i%mxGPU;
+<      
+<     int fzp1 = ((fz+1) % mzGPU);
+<     int fzm1 = ((fz-1+mzGPU) % mzGPU); 
+<     int fyp1 = ((fy+1) % mytGPU);
+<     int fym1 = ((fy-1+mytGPU) % mytGPU);
+<     int fxp1 = ((fx+1) % mxGPU);
+<     int fxm1 = ((fx-1+mxGPU) % mxGPU);
+<     
+<     neighbor0 = fzm1 * mxmy + fy   * mxGPU + fx;
+<     neighbor1 = fz   * mxmy + fym1 * mxGPU + fx;
+<     neighbor2 = fz   * mxmy + fy   * mxGPU + fxm1;
+<     neighbor3 = fz   * mxmy + fy   * mxGPU + fxp1;
+<     neighbor4 = fz   * mxmy + fyp1 * mxGPU + fx;
+<     neighbor5 = fzp1 * mxmy + fy   * mxGPU + fx;
+<     
+<   }
+< 
+<   neighbor0GPU[i] = neighbor0;
+<   neighbor1GPU[i] = neighbor1;
+<   neighbor2GPU[i] = neighbor2;
+<   neighbor3GPU[i] = neighbor3;
+<   neighbor4GPU[i] = neighbor4;
+<   neighbor5GPU[i] = neighbor5;  
+< 
+< 
+<   int neighborpxpy, neighborpxmy, neighborpxpz, neighborpxmz;
+<   int neighbormxpy, neighbormxmy, neighbormxpz, neighbormxmz;
+<   int neighborpypz, neighborpymz, neighbormypz, neighbormymz;
+< 
+<   int neighborpxpypz, neighborpxpymz, neighborpxmypz, neighborpxmymz;
+<   int neighbormxpypz, neighbormxpymz, neighbormxmypz, neighbormxmymz;
+<   
+<   {
+<     //NEIGHBOUR NEIGHBOR3
+<     int fz = neighbor3/mxmy;
+<     int fy = (neighbor3 % mxmy)/mxGPU;
+<     int fx = neighbor3 % mxGPU;
+<     int fzp1, fzm1, fyp1, fym1;
+<     
+<     fzp1 = ((fz+1) % mzGPU) * mxmy;
+<     fzm1 = ((fz-1+mzGPU) % mzGPU) * mxmy; 
+<     fyp1 = ((fy+1) % mytGPU) * mxGPU;
+<     fym1 = ((fy-1+mytGPU) % mytGPU) * mxGPU;
+< 
+<     fz = fz * mxmy;
+<     fy = fy * mxGPU;
+<     neighborpxmz = fzm1 + fy   + fx;
+<     neighborpxmy = fz   + fym1 + fx;
+< 
+<     neighborpxpy = fz   + fyp1 + fx;
+<     neighborpxpz = fzp1 + fy   + fx;    
+< 
+<     //NEIGHBOUR NEIGHBOR2
+<     fz = neighbor2/mxmy;
+<     fy = (neighbor2 % mxmy)/mxGPU;
+<     fx = neighbor2 % mxGPU;
+<     fzp1 = ((fz+1) % mzGPU) * mxmy;
+<     fzm1 = ((fz-1+mzGPU) % mzGPU) * mxmy; 
+<     fyp1 = ((fy+1) % mytGPU) * mxGPU;
+<     fym1 = ((fy-1+mytGPU) % mytGPU) * mxGPU;
+< 
+<     fz = fz * mxmy;
+<     fy = fy * mxGPU;
+<     neighbormxmz = fzm1 + fy   + fx;
+<     neighbormxmy = fz   + fym1 + fx;
+< 
+<     neighbormxpy = fz   + fyp1 + fx;
+<     neighbormxpz = fzp1 + fy   + fx;    
+< 
+<     //NEIGHBOUR NEIGHBOR4
+<     fz = neighbor4/mxmy;
+<     fy = (neighbor4 % mxmy)/mxGPU;
+<     fx = neighbor4 % mxGPU;
+<     fzp1 = ((fz+1) % mzGPU) * mxmy;
+<     fzm1 = ((fz-1+mzGPU) % mzGPU) * mxmy; 
+< 
+<     fy = fy * mxGPU;
+<     neighborpymz = fzm1 + fy   + fx;
+< 
+<     neighborpypz = fzp1 + fy   + fx;    
+< 
+<     //NEIGHBOUR NEIGHBOR1
+<     fz = neighbor1/mxmy;
+<     fy = (neighbor1 % mxmy)/mxGPU;
+<     fx = neighbor1 % mxGPU;
+<     fzp1 = ((fz+1) % mzGPU) * mxmy;
+<     fzm1 = ((fz-1+mzGPU) % mzGPU) * mxmy; 
+< 
+<     fy = fy * mxGPU;
+<     neighbormymz = fzm1 + fy   + fx;
+< 
+<     neighbormypz = fzp1 + fy   + fx;    
+<     
+<     //NEIGHBOUR NEIGHBORPXPY
+<     fz = neighborpxpy/mxmy;
+<     fy = (neighborpxpy % mxmy)/mxGPU;
+<     fx = neighborpxpy % mxGPU;
+<     fzp1 = ((fz+1) % mzGPU) * mxmy;
+<     fzm1 = ((fz-1+mzGPU) % mzGPU) * mxmy; 
+< 
+<     fy = fy * mxGPU;
+<     neighborpxpymz = fzm1 + fy   + fx;
+< 
+<     neighborpxpypz = fzp1 + fy   + fx;    
+<         
+<     //NEIGHBOUR NEIGHBORPXMY
+<     fz = neighborpxmy/mxmy;
+<     fy = (neighborpxmy % mxmy)/mxGPU;
+<     fx = neighborpxmy % mxGPU;
+<     fzp1 = ((fz+1) % mzGPU) * mxmy;
+<     fzm1 = ((fz-1+mzGPU) % mzGPU) * mxmy; 
+< 
+<     fy = fy * mxGPU;
+<     neighborpxmymz = fzm1 + fy   + fx;
+< 
+<     neighborpxmypz = fzp1 + fy   + fx;    
+< 
+<     //NEIGHBOUR NEIGHBORMXPY
+<     fz = neighbormxpy/mxmy;
+<     fy = (neighbormxpy % mxmy)/mxGPU;
+<     fx = neighbormxpy % mxGPU;
+<     fzp1 = ((fz+1) % mzGPU) * mxmy;
+<     fzm1 = ((fz-1+mzGPU) % mzGPU) * mxmy; 
+< 
+<     fy = fy * mxGPU;
+<     neighbormxpymz = fzm1 + fy   + fx;
+< 
+<     neighbormxpypz = fzp1 + fy   + fx;    
+< 
+<     //NEIGHBOUR NEIGHBORMXMY
+<     fz = neighbormxmy/mxmy;
+<     fy = (neighbormxmy % mxmy)/mxGPU;
+<     fx = neighbormxmy % mxGPU;
+<     fzp1 = ((fz+1) % mzGPU) * mxmy;
+<     fzm1 = ((fz-1+mzGPU) % mzGPU) * mxmy; 
+< 
+<     fy = fy * mxGPU;
+<     neighbormxmymz = fzm1 + fy   + fx;
+< 
+<     neighbormxmypz = fzp1 + fy   + fx;    
+<   }  
+<   
+<   neighborpxpyGPU[i] = neighborpxpy;
+<   neighborpxmyGPU[i] = neighborpxmy;
+<   neighborpxpzGPU[i] = neighborpxpz;
+<   neighborpxmzGPU[i] = neighborpxmz;
+<   neighbormxpyGPU[i] = neighbormxpy;
+<   neighbormxmyGPU[i] = neighbormxmy;
+<   neighbormxpzGPU[i] = neighbormxpz;
+<   neighbormxmzGPU[i] = neighbormxmz;
+<   neighborpypzGPU[i] = neighborpypz;
+<   neighborpymzGPU[i] = neighborpymz;
+<   neighbormypzGPU[i] = neighbormypz;
+<   neighbormymzGPU[i] = neighbormymz;
+<   neighborpxpypzGPU[i] = neighborpxpypz;
+<   neighborpxpymzGPU[i] = neighborpxpymz;
+<   neighborpxmypzGPU[i] = neighborpxmypz;
+<   neighborpxmymzGPU[i] = neighborpxmymz;
+<   neighbormxpypzGPU[i] = neighbormxpypz;
+<   neighbormxpymzGPU[i] = neighbormxpymz;
+<   neighbormxmypzGPU[i] = neighbormxmypz;
+<   neighbormxmymzGPU[i] = neighbormxmymz;
+< 
+< 
+<   if(i==0){
+<     pNeighbors->vecino0GPU = neighbor0GPU;
+<     pNeighbors->vecino1GPU = neighbor1GPU;
+<     pNeighbors->vecino2GPU = neighbor2GPU;
+<     pNeighbors->vecino3GPU = neighbor3GPU;
+<     pNeighbors->vecino4GPU = neighbor4GPU;
+<     pNeighbors->vecino5GPU = neighbor5GPU;
+<     pNeighbors->vecinopxpyGPU = neighborpxpyGPU;
+<     pNeighbors->vecinopxmyGPU = neighborpxmyGPU;
+<     pNeighbors->vecinopxpzGPU = neighborpxpzGPU;
+<     pNeighbors->vecinopxmzGPU = neighborpxmzGPU;
+<     pNeighbors->vecinomxpyGPU = neighbormxpyGPU;
+<     pNeighbors->vecinomxmyGPU = neighbormxmyGPU;
+<     pNeighbors->vecinomxpzGPU = neighbormxpzGPU;
+<     pNeighbors->vecinomxmzGPU = neighbormxmzGPU;
+<     pNeighbors->vecinopypzGPU = neighborpypzGPU;
+<     pNeighbors->vecinopymzGPU = neighborpymzGPU;
+<     pNeighbors->vecinomypzGPU = neighbormypzGPU;
+<     pNeighbors->vecinomymzGPU = neighbormymzGPU;
+<     pNeighbors->vecinopxpypzGPU = neighborpxpypzGPU;
+<     pNeighbors->vecinopxpymzGPU = neighborpxpymzGPU;
+<     pNeighbors->vecinopxmypzGPU = neighborpxmypzGPU;
+<     pNeighbors->vecinopxmymzGPU = neighborpxmymzGPU;
+<     pNeighbors->vecinomxpypzGPU = neighbormxpypzGPU;
+<     pNeighbors->vecinomxpymzGPU = neighbormxpymzGPU;
+<     pNeighbors->vecinomxmypzGPU = neighbormxmypzGPU;
+<     pNeighbors->vecinomxmymzGPU = neighbormxmymzGPU;
+<   }
+< }
+
+
+kernelConstructWQuasiNeutrallyBuoyant.cu
+1452a1453,1492
+>   
+>   //double perturbation = pressurea1GPU * sin(pi2 *pressurea0GPU* ((i/(mxGPU*mytGPU))-0.5*mzGPU+0.5) / double(mzGPU));
+>   
+>   //  int icx = i%mxGPU; 
+>   //int icy = (i%(mxGPU*mytGPU)) /mxGPU;
+>   //int icz = i/(mxGPU*mytGPU);
+>   /*
+>   float fluidpos[3];
+>   fluidpos[0] = (icx-0.5*mxGU+0.5)/(float)mxGPU;
+>   fluidpos[1] = (icy-0.5*mytGU+0.5)/(float)mytGPU;
+>   fluidpos[2] = (icz-0.5*mzGU+0.5)/(float)mzGPU;
+>   */
+>   //  planeGPU=2;
+>   //dir=0;
+>   //  for(int plane=0; plane<3; plane++) perturbation[plane] = 0.0;
+> 
+>   //  perturbation[planeGPU] = shearAGPU * sin(pi2*shearKGPU* fluidpos[dirGPU]);
+> 
+> 
+> 
+>   if(perturbationGPU){
+>     float posfluid = 0.0;
+>     int ic;
+>     switch(perturbationPlaneGPU){
+>     case 0: ic = i%mxGPU;                    posfluid = (ic-0.5*mxGPU+0.5)/(float)mxGPU;    break;
+>     case 1: ic = (i%(mxGPU*mytGPU)) /mxGPU;  posfluid = (ic-0.5*mytGPU+0.5)/(float)mytGPU;  break;
+>     case 2: ic = i/(mxGPU*mytGPU);           posfluid = (ic-0.5*mzGPU+0.5)/(float)mzGPU;    break;
+>     }
+>     double pi2 = 6.28318530717958648;
+>     switch(perturbationDirGPU){
+>     case 0: wx -= perturbationAGPU*(posfluid>0?-1:1); break;
+>     case 1: wy -= perturbationAGPU*(posfluid>0?-1:1); break;
+>     case 2: wz -= perturbationAGPU*(posfluid>0?-1:1); break;
+>     }
+>   }
+> 
+>   
+>   
+> 
+>   
+1454,1456c1494,1497
+<   wx += vx ;//- pressurea1GPU * dtGPU;//* 0.267261241912424385 * dtGPU;
+<   wy += vy ;//- pressurea1GPU * 0.534522483824848769 * dtGPU;
+<   wz += vz ;//- pressurea1GPU * 0.801783725737273154 * dtGPU;
+---
+>   
+>   wx += vx;
+>   wy += vy;
+>   wz += vz;
+
+
+loadDataMain.cu
+44a45
+> //!*R
+63a65
+> 
+64a67,76
+> //!*R shear perturbation parameters
+> const string wperturbationparameters="perturbationparameters";
+> 
+> /* CODE MODIFIED by Marc */
+> const string wstokesflowparams="stokesFlowParams";
+> const string wwall1params="wall1Params";
+> const string wwall2params="wall2Params";
+> const string wwall3params="wall3Params";
+> /* END OF MODIFICATION by Marc */
+> 
+89d100
+< const string wbondedForcesVersion="bondedForcesVersion";
+92,99d102
+< const string wbigSystem="bigSystem";
+< //Raul added, a saffman cut off wave number is now a possible input for quasi2D, which will change the kernel to 1/(k*(k+kc)). Also added viscosity measure amplitude (amplitude of the sinusoidal perturbation). Also add layer width for PBC saffman correction. Viscosity measure allows to specify also the frequency and direction of the shear flow.
+< 
+< const string wsaffmanCutOffWaveNumber="saffmanCutOffWaveNumber";
+< const string wviscosityMeasureAmplitude="viscosityMeasureAmplitude";
+< const string wviscosityMeasure="viscosityMeasure";
+< const string wsaffmanLayerWidth="saffmanLayerWidth";
+< 
+134d136
+< //quasiNeutrallyBuoyant4pt2D Begins
+137,147c139
+< //quasi2D Begins
+< const string wquasi2D="quasi2D";
+< const string whydrodynamicRadius="hydrodynamicRadius";
+< const string wnDrift="nDrift";
+< const string wuse_RFD="use_RFD";
+< const string wstokesLimit2D="stokesLimit2D";
+< const string wpredictorCorrector="predictorCorrector";
+< const string wsampleHydroGrid="sampleHydroGrid";
+< const string wcellsHydroGrid = "cellsHydroGrid";
+< const string wgreenParticles = "greenParticles";
+< //quasi2D Ends
+---
+> //quasiNeutrallyBuoyant4pt2D Begins
+159,162d150
+< //*!R new parameters
+< const string wconfinementZ="confinementZ";
+< const string wLJParameters="LJParameters";
+< 
+218d205
+<   bondedForcesVersion=0;
+221,234d207
+< 
+<   bigSystem=0;
+< 
+<   //Raul Added. Default value of saffman cut off, makes the code behave as normal. Also added viscosity measure amp
+<   saffmanCutOffWaveNumber=0.0;
+<   viscosityMeasureAmplitude = 0.0;
+<   saffmanLayerWidth = 0.0;
+< 
+< 
+<   //Raul Added. Viscosity measure parameters
+<   viscosityMeasureMode = 0.0;
+<   viscosityMeasurePlane = 0.0;
+<   viscosityMeasureDir = 0.0;
+< 
+282,295d254
+<   //quasi2D Begins
+<   quasi2D = 0;
+<   hydrodynamicRadius = 1.0;
+<   nDrift = 1;
+<   stokesLimit2D = 0;
+<   predictorCorrector = 0;
+<   sampleHydroGrid = 1;
+<   mxHydroGrid = 16;
+<   myHydroGrid = 16;
+<   greenStart = 0;
+<   greenEnd = 0;
+<   use_RFD = 1;
+<   //quasi2D Ends
+< 
+298,299d256
+<   //*!R new parameter
+<   confinementZ = 0;
+324a282,295
+>   //!*R
+>   stokesFlowFreq = 0;
+>   stokesFlowAmp= 0;
+>   stokesFlowTime= 0;
+>   nwall1 = nwall2 = nwall3 = 0;
+>   kwall1 = kwall2 = kwall3 = 0;
+>   zwall1 = zwall2 = zwall3 = 0;
+>   perturbation = false;
+>   perturbationPlane = -1;
+>   perturbationDir = -1;
+>   perturbationA = 0.0;
+>   perturbationK = 0.0;
+> 
+> 
+348a320
+>     
+357,372d328
+<     //Raul added, processing of saffman cut off, layer width and viscosity measure input
+<     else if(word==wsaffmanCutOffWaveNumber){
+<       fileinput >> saffmanCutOffWaveNumber;
+<     }
+<     else if(word==wsaffmanLayerWidth){
+<       fileinput >> saffmanLayerWidth;
+<     }
+< 
+<     else if(word==wviscosityMeasureAmplitude){
+<       fileinput >> viscosityMeasureAmplitude;
+<     }
+< 
+<     else if(word==wviscosityMeasure){
+<       fileinput >> viscosityMeasurePlane >> viscosityMeasureDir >> viscosityMeasureAmplitude >> viscosityMeasureMode;
+<     }
+< 
+434a391,407
+>     //!*R
+>     else if(word==wperturbationparameters){
+>       perturbation = true;
+>       fileinput >> perturbationPlane >> perturbationDir >> perturbationA >> perturbationK;
+>     }
+>     else if(word==wstokesflowparams){
+>       fileinput >> stokesFlowFreq >> stokesFlowAmp >> stokesFlowTime;
+>     }
+>     else if(word==wwall1params){
+>       fileinput >> nwall1 >> kwall1 >> zwall1;
+>     }
+>     else if(word==wwall2params){
+>       fileinput >> nwall2 >> kwall2 >> zwall2;
+>     }
+>     else if(word==wwall3params){
+>       fileinput >> nwall3 >> kwall3 >> zwall3;
+>     }
+524,526d496
+<     else if(word==wbondedForcesVersion){
+<       fileinput >> bondedForcesVersion;
+<     }
+530,532d499
+<     else if(word==wbigSystem){
+<       fileinput >> bigSystem;
+<     }
+606,634d572
+<     //quasi2D Begins
+<     else if(word==wquasi2D){
+<       quasi2D=1;
+<     }
+<     else if(word == whydrodynamicRadius){
+<       fileinput >> hydrodynamicRadius;
+<     }
+<     else if(word == wnDrift){
+<       fileinput >> nDrift;
+<     }
+<     else if(word==wstokesLimit2D){
+<       stokesLimit2D=1;
+<     }
+<     else if(word==wpredictorCorrector){
+<       fileinput >> predictorCorrector;
+<     }
+<     else if(word==wsampleHydroGrid){
+<       fileinput >> sampleHydroGrid;
+<     }
+<     else if(word==wcellsHydroGrid){
+<       fileinput >> mxHydroGrid >> myHydroGrid;
+<     }
+<     else if(word==wgreenParticles){
+<       fileinput >> greenStart >> greenEnd;
+<     }
+<     else if(word==wuse_RFD){
+<       fileinput >> use_RFD;
+<     }
+<     //quasi2D Ends
+656,664d593
+<     //*!R new parameters
+<     else if(word==wconfinementZ){
+<       confinementZ = 1;
+<       fileinput >> confinementZK;
+<     }
+<     else if(word==wLJParameters){
+<       fileinput>>LJParameterFile;
+<     }
+< 
+710c639,640
+<       cout << "LAST WORD READED: " << oldword << endl;
+---
+>       cout << "LAST WORD READ: " << oldword << endl;
+>       cout << "THIS WORD: " << word << endl;
+718a649,651
+> 
+>   perturbationA = perturbationA*dt/densfluid;
+>   
+main.cpp
+3c3
+< // Copyright (c) 2010-2017, Florencio Balboa Usabiaga
+---
+> // Copyright (c) 2010-2015, Florencio Balboa Usabiaga
+27d26
+< #include "binary_src_backup.h"
+31,41c30
+<   std::cerr<<"COMPILED AT "<<__TIME__<<" on "<<__DATE__<<endl;
+<   for(int i = 1; i<argc; i++){
+<     if(std::string(argv[i]).compare("--dump-src") == 0){
+<       std::ofstream srcout("src.tar.xz", std::ios::binary);
+<       std::cerr<<"DUMPING ORIGINAL SOURCE AND EXITING"<<endl;
+<       srcout.write((const char*)src_tar_xz, src_tar_xz_len);
+<       exit(0);
+<     }
+<   }
+<     
+<   
+---
+> 
+103,105d91
+<   else if(quasi2D or stokesLimit2D){
+<     if(!schemeQuasi2D()) return 0;
+<   }
+109,111d94
+<   else if(stokesLimit==1 && bigSystem==1){
+<     if(!schemeStokesLimitBigSystem()) return 0;
+<   }
+126c109
+<   return 0;
+---
+>   return 1;
+
+nonBondedForce.cu
+23,33c23,34
+<  __device__ double LJ(double r2, double *Aij, double *Bij, int typeindex, int i, int j){
+<    if(!LJParameterFileProvidedGPU) return 0.0;
+<    
+<    if(r2==0.0) return 0.0;  
+<    else if(r2>(1.0/invcutoff2GPU)) return 0.0;
+<    
+<    double A = Aij[typeindex];
+<    double B = Bij[typeindex];
+<    double r6 = 1.0/(r2*r2*r2);
+<    return (A*r6*r6 - B*r6)/r2;
+<  }
+---
+> __device__ double LJ(double r2, double *Aij, double *Bij, int typeindex, int i, int j){
+>   if(r2==0.0) return 0.0;
+> 
+>   else if(r2>(1.0/invcutoff2GPU)) return 0.0;
+> 
+>   double A = 48.0;
+>   double B = 24.0;
+>   double r6 = 1.0/(r2*r2*r2);
+> 
+>   return (A*r6*r6-B*r6)/r2;
+> }
+> 
+
+particles.h
+55d54
+< EXTERN_PARTICLES int greenStart, greenEnd;
+60d58
+< EXTERN_PARTICLES bool bondedForcesVersion;
+89,90c87
+< EXTERN_PARTICLES string LJParameterFile;
+< EXTERN_PARTICLES bool LJParameterFileProvided;
+---
+> 
+
+quasiNeutrallyBuoyantFunctions2D.cu
+366c366
+<   // NEW bonded forces
+---
+>   //NEW bonded forces
+368c368
+<     // call function for bonded forces particle-particle
+---
+>     //call function for bonded forces particle-particle
+quasiNeutrallyBuoyantFunctions4pt2D.cu
+quasiNeutrallyBuoyantFunctions.cu
+3c3
+< // Copyright (c) 2010-2016, Florencio Balboa Usabiaga
+---
+> // Copyright (c) 2010-2015, Florencio Balboa Usabiaga
+20,49c20,22
+< 
+< 
+< 
+< //Raul added, a kernel to add a shear flow to the fluid. A sinusoidal force is added to each fluid cell. This shear flow is intended to be used for viscosity measurements.
+< __global__ void addShearFlowQuasiNeutrallyBuoyant(cufftDoubleComplex *vxZ,
+< 					cufftDoubleComplex *vyZ,
+< 					cufftDoubleComplex *vzZ,
+< 					double viscosityMeasureAmplitude,
+< 					double viscosityMeasureMode,
+< 					int viscosityMeasurePlane,
+< 					int viscosityMeasureDir){
+<   const int i = blockDim.x * blockIdx.x + threadIdx.x;
+<   if(i>=ncellsGPU) return;
+<   double posfluid;
+<   int ic;
+<   switch(viscosityMeasurePlane){
+<   case 0: ic = i%mxGPU;                    posfluid = (ic-0.5*mxGPU+0.5)/(double)mxGPU;    break;
+<   case 1: ic = (i%(mxGPU*mytGPU)) /mxGPU;  posfluid = (ic-0.5*mytGPU+0.5)/(double)mytGPU;  break;
+<   case 2: ic = i/(mxGPU*mytGPU);           posfluid = (ic-0.5*mzGPU+0.5)/(double)mzGPU;    break;
+<   }
+<   constexpr double pi2 = 6.28318530717958648;
+<   double force = viscosityMeasureAmplitude * sin(pi2*viscosityMeasureMode* posfluid)*dtGPU/densfluidGPU;
+<   switch(viscosityMeasureDir){
+<   case 0: vxZ[i].x -= force; break;
+<   case 1: vyZ[i].x -= force; break;
+<   case 2: vzZ[i].x -= force; break;
+<   }
+<   
+< }
+< 
+---
+> # define NWALL1 10000
+> # define NWALL2 20000
+> # define NWALL3 40000
+65c38
+< 						 const threeParticleBondsVariables* tPBV){
+---
+> 						 const threeParticleBondsVariables* tPBV, double time){
+96,98c69,76
+< 
+<   if(confinementZGPU){
+<     fz = confinementZKGPU*rz;
+---
+>   /* CODE MODIFIED by Marc */
+>   if(i < nwall2GPU){
+>   //  if(time < stokesFlowTimeGPU)
+>   //   	fx = stokesFlowAmpGPU*cos(6.2832*time*stokesFlowFreqGPU);
+>    	if(i < nwall1GPU)
+>      	fz = -kwall1GPU*(rz - zwall1GPU);
+>    	else
+>      	fz = -kwall2GPU*(rz - zwall2GPU);
+99a78,83
+>   else if(i < nwall3GPU) {
+>     if(time < stokesFlowTimeGPU)
+>      	fx = -stokesFlowAmpGPU*cos(6.2832*time*stokesFlowFreqGPU);
+>    	fz = -kwall3GPU*(rz - zwall3GPU);
+>   }
+>   /* END OF MODIFICATION by Marc */
+101d84
+<   
+7427a7411,7415
+>   int vecinopxpy, vecinopxmy, vecinopxpz, vecinopxmz;
+>   int vecinomxpy, vecinomxpz;
+>   int vecinopypz, vecinopymz, vecinomypz;
+>   int vecinopxpypz, vecinopxpymz, vecinopxmypz, vecinopxmymz;
+>   int vecinomxpypz, vecinomxpymz, vecinomxmypz;
+7482a7471,7499
+>   vecinopxpy = tex1Dfetch(texvecinopxpyGPU, icelx);
+>   vecinopxmy = tex1Dfetch(texvecinopxmyGPU, icelx);
+>   vecinopxpz = tex1Dfetch(texvecinopxpzGPU, icelx);
+>   vecinopxmz = tex1Dfetch(texvecinopxmzGPU, icelx);
+>   vecinomxpy = tex1Dfetch(texvecinomxpyGPU, icelx);
+>   //  vecinomxmy = tex1Dfetch(texvecinomxmyGPU, icelx);
+>   vecinomxpz = tex1Dfetch(texvecinomxpzGPU, icelx);
+>   //  vecinomxmz = tex1Dfetch(texvecinomxmzGPU, icelx);
+>   vecinopypz = tex1Dfetch(texvecinopypzGPU, icelx);
+>   vecinopymz = tex1Dfetch(texvecinopymzGPU, icelx);
+>   vecinomypz = tex1Dfetch(texvecinomypzGPU, icelx);
+>   //  vecinomymz = tex1Dfetch(texvecinomymzGPU, icelx);
+>   vecinopxpypz = tex1Dfetch(texvecinopxpypzGPU, icelx);
+>   vecinopxpymz = tex1Dfetch(texvecinopxpymzGPU, icelx);
+>   vecinopxmypz = tex1Dfetch(texvecinopxmypzGPU, icelx);
+>   vecinopxmymz = tex1Dfetch(texvecinopxmymzGPU, icelx);
+>   vecinomxpypz = tex1Dfetch(texvecinomxpypzGPU, icelx);
+>   vecinomxpymz = tex1Dfetch(texvecinomxpymzGPU, icelx);
+>   vecinomxmypz = tex1Dfetch(texvecinomxmypzGPU, icelx);
+>   //  vecinomxmymz = tex1Dfetch(texvecinomxmymzGPU, icelx);
+>   int vecinopxpxpypz = tex1Dfetch(texvecino3GPU, vecinopxpypz);
+>   int vecinopxpxpymz = tex1Dfetch(texvecino3GPU, vecinopxpymz);
+>   int vecinopxpxmypz = tex1Dfetch(texvecino3GPU, vecinopxmypz);
+>   int vecinopxpxmymz = tex1Dfetch(texvecino3GPU, vecinopxmymz);
+>   int vecinopxpx     = tex1Dfetch(texvecino3GPU, vecino3);
+>   int vecinopxpxpy   = tex1Dfetch(texvecino3GPU, vecinopxpy);
+>   int vecinopxpxmy   = tex1Dfetch(texvecino3GPU, vecinopxmy);
+>   int vecinopxpxpz   = tex1Dfetch(texvecino3GPU, vecinopxpz);
+>   int vecinopxpxmz   = tex1Dfetch(texvecino3GPU, vecinopxmz);
+7678c7695,7725
+<   
+---
+>   vecinopxpy = tex1Dfetch(texvecinopxpyGPU, icely);
+>   vecinopxmy = tex1Dfetch(texvecinopxmyGPU, icely);
+>   vecinopxpz = tex1Dfetch(texvecinopxpzGPU, icely);
+>   vecinopxmz = tex1Dfetch(texvecinopxmzGPU, icely);
+>   vecinomxpy = tex1Dfetch(texvecinomxpyGPU, icely);
+>   //  vecinomxmy = tex1Dfetch(texvecinomxmyGPU, icely);
+>   vecinomxpz = tex1Dfetch(texvecinomxpzGPU, icely);
+>   //  vecinomxmz = tex1Dfetch(texvecinomxmzGPU, icely);
+>   vecinopypz = tex1Dfetch(texvecinopypzGPU, icely);
+>   vecinopymz = tex1Dfetch(texvecinopymzGPU, icely);
+>   vecinomypz = tex1Dfetch(texvecinomypzGPU, icely);
+>   //  vecinomymz = tex1Dfetch(texvecinomymzGPU, icely);
+>   vecinopxpypz = tex1Dfetch(texvecinopxpypzGPU, icely);
+>   vecinopxpymz = tex1Dfetch(texvecinopxpymzGPU, icely);
+>   vecinopxmypz = tex1Dfetch(texvecinopxmypzGPU, icely);
+>   vecinopxmymz = tex1Dfetch(texvecinopxmymzGPU, icely);
+>   vecinomxpypz = tex1Dfetch(texvecinomxpypzGPU, icely);
+>   vecinomxpymz = tex1Dfetch(texvecinomxpymzGPU, icely);
+>   vecinomxmypz = tex1Dfetch(texvecinomxmypzGPU, icely);
+>   //  vecinomxmymz = tex1Dfetch(texvecinomxmymzGPU, icely);  
+>   //DEFINE MORE NEIGHBORS
+>   int vecinopymxpymz = tex1Dfetch(texvecino4GPU, vecinomxpymz);
+>   int vecinopymxpy   = tex1Dfetch(texvecino4GPU, vecinomxpy);
+>   int vecinopymxpypz = tex1Dfetch(texvecino4GPU, vecinomxpypz);
+>   int vecinopypymz   = tex1Dfetch(texvecino4GPU, vecinopymz);
+>   int vecinopypy     = tex1Dfetch(texvecino4GPU, vecino4);
+>   int vecinopypypz   = tex1Dfetch(texvecino4GPU, vecinopypz);
+>   int vecinopypxpymz = tex1Dfetch(texvecino4GPU, vecinopxpymz);
+>   int vecinopypxpy   = tex1Dfetch(texvecino4GPU, vecinopxpy);
+>   int vecinopypxpypz = tex1Dfetch(texvecino4GPU, vecinopxpypz);
+> 
+7864c7911,7941
+<  
+---
+>   vecinopxpy = tex1Dfetch(texvecinopxpyGPU, icelz);
+>   vecinopxmy = tex1Dfetch(texvecinopxmyGPU, icelz);
+>   vecinopxpz = tex1Dfetch(texvecinopxpzGPU, icelz);
+>   vecinopxmz = tex1Dfetch(texvecinopxmzGPU, icelz);
+>   vecinomxpy = tex1Dfetch(texvecinomxpyGPU, icelz);
+>   //  vecinomxmy = tex1Dfetch(texvecinomxmyGPU, icelz);
+>   vecinomxpz = tex1Dfetch(texvecinomxpzGPU, icelz);
+>   //  vecinomxmz = tex1Dfetch(texvecinomxmzGPU, icelz);
+>   vecinopypz = tex1Dfetch(texvecinopypzGPU, icelz);
+>   vecinopymz = tex1Dfetch(texvecinopymzGPU, icelz);
+>   vecinomypz = tex1Dfetch(texvecinomypzGPU, icelz);
+>   //  vecinomymz = tex1Dfetch(texvecinomymzGPU, icelz);
+>   vecinopxpypz = tex1Dfetch(texvecinopxpypzGPU, icelz);
+>   vecinopxpymz = tex1Dfetch(texvecinopxpymzGPU, icelz);
+>   vecinopxmypz = tex1Dfetch(texvecinopxmypzGPU, icelz);
+>   vecinopxmymz = tex1Dfetch(texvecinopxmymzGPU, icelz);
+>   vecinomxpypz = tex1Dfetch(texvecinomxpypzGPU, icelz);
+>   vecinomxpymz = tex1Dfetch(texvecinomxpymzGPU, icelz);
+>   vecinomxmypz = tex1Dfetch(texvecinomxmypzGPU, icelz);
+>   //  vecinomxmymz = tex1Dfetch(texvecinomxmymzGPU, icelz);  
+>   //DEFINE MORE NEIGHBORS
+>   int vecinopzmxmypz = tex1Dfetch(texvecino5GPU, vecinomxmypz);
+>   int vecinopzmxpz   = tex1Dfetch(texvecino5GPU, vecinomxpz);
+>   int vecinopzmxpypz = tex1Dfetch(texvecino5GPU, vecinomxpypz);
+>   int vecinopzmypz   = tex1Dfetch(texvecino5GPU, vecinomypz);
+>   int vecinopzpz     = tex1Dfetch(texvecino5GPU, vecino5);
+>   int vecinopzpypz   = tex1Dfetch(texvecino5GPU, vecinopypz);
+>   int vecinopzpxmypz = tex1Dfetch(texvecino5GPU, vecinopxmypz);
+>   int vecinopzpxpz   = tex1Dfetch(texvecino5GPU, vecinopxpz);
+>   int vecinopzpxpypz = tex1Dfetch(texvecino5GPU, vecinopxpypz);
+> 
+
+realToComplex.cu
+53,58d52
+<   /*if((fabs(vxUpI[j].y) / (fabs(vxUpI[j].x) + 1e-12) > 1e-08) and (fabs(vxUpI[j].y) > 1e-12)){ 
+<     printf("i = %i, vx.x = %e, vx.y = %e, r = %e \n", j, vxUpI[j].x, vxUpI[j].y, fabs(vxUpI[j].y / (fabs(vxUpI[j].x) + 1e-12)));
+<   }
+<   if((fabs(vyUpI[j].y) / (fabs(vyUpI[j].x) + 1e-12) > 1e-08) and (fabs(vyUpI[j].y) > 1e-12)){ 
+<     printf("i = %i, vy.x = %e, vy.y = %e, r = %e \n", j, vyUpI[j].x, vyUpI[j].y, fabs(vyUpI[j].y / (fabs(vyUpI[j].x) + 1e-12)));
+<   }*/
+613,627d606
+< __global__ void setFieldToZeroInput(cufftDoubleComplex* vxZ,
+< 				    cufftDoubleComplex* vyZ,
+< 				    cufftDoubleComplex* vzZ){
+< 
+<   int i = blockDim.x * blockIdx.x + threadIdx.x;
+<   if(i>=ncellsGPU) return;   
+< 
+<   vxZ[i].x = 0;
+<   vxZ[i].y = 0;
+<   vyZ[i].x = 0;
+<   vyZ[i].y = 0;
+<   vzZ[i].x = 0;
+<   vzZ[i].y = 0;
+< }
+< 
+
+runSchemeQuasiNeutrallyBuoyant.cu
+252c252
+< 										      tPBV
+---
+> 										      tPBV, step*dt
+267,269c267,269
+<     
+<     
+<     
+---
+> 
+> 
+> 
+293c293
+< 
+---
+> 									      
+295,305d294
+<     //Add external forces
+<     //Raul added, call to shear flow kernel, this sums a sinusoidal force to each fluid cell.
+<     if(viscosityMeasureAmplitude != 0.0){
+<       
+<       addShearFlowQuasiNeutrallyBuoyant<<<numBlocks, threadsPerBlock>>>(vxZ, vyZ, vzZ,
+< 									viscosityMeasureAmplitude,
+< 									viscosityMeasureMode,
+< 									viscosityMeasurePlane,
+< 									viscosityMeasureDir);
+<     }
+< 
+
+
+runSchemeStokesLimit.cu
+183,184c183
+< 
+< 
+---
+>     
+196,207d194
+<    
+<      //Add external forces
+<     //Raul added, call to shear flow kernel, this sums a sinusoidal force to each fluid cell.
+<     if(viscosityMeasureAmplitude != 0.0){
+<       
+<       addShearFlowStokesLimit<<<numBlocks, threadsPerBlock>>>(vxZ, vyZ, vzZ,
+< 							      viscosityMeasureAmplitude,
+< 							      viscosityMeasureMode,
+< 							      viscosityMeasurePlane,
+< 							      viscosityMeasureDir);
+<     }
+< 
+243a231
+> 
+255,267d242
+<     
+<     //Add external forces
+<     //Raul added, call to shear flow kernel, this sums a sinusoidal force to each fluid cell.
+<     if(viscosityMeasureAmplitude != 0.0){
+<       
+<       addShearFlowStokesLimit<<<numBlocks, threadsPerBlock>>>(vxZ, vyZ, vzZ,
+< 							      viscosityMeasureAmplitude,
+< 							      viscosityMeasureMode,
+< 							      viscosityMeasurePlane,
+< 							      viscosityMeasureDir);
+<     }
+< 
+< 
+308c283
+<       if(!saveFunctionsSchemeStokesLimit(1,step, samplefreq)) return 0;
+---
+>       if(!saveFunctionsSchemeStokesLimit(1,step)) return 0;
+
+runSchemeStokesLimitFirstOrder.cu
+239c239
+<       if(!saveFunctionsSchemeStokesLimit(1,step, samplefreq)) return 0;
+---
+>       if(!saveFunctionsSchemeStokesLimit(1,step)) return 0;
+
+saveFluidVTK.cu
+27,30d26
+< #include "hydroAnalysis.h"
+< 
+< 
+< namespace space_saveFluidVTK{
+32a29,30
+> #include "hydroAnalysis.h"
+> 
+222,224c220,222
+<       vectorVelocities[3*j]   = 0.5*(cvx[vecino2]+cvx[i]) - vxParticleI[0];//Use this for projection in 2D
+<       vectorVelocities[1+3*j] = 0.5*(cvz[vecino0]+cvz[i]) - vzParticleI[0];//Use this for projection in 2D
+<       vectorVelocities[2+3*j] = 0.5*(cvy[vecino1]+cvy[i]) - vyParticleI[0];//Use this for projection in 2D
+---
+>       vectorVelocities[3*j]   = 0.5*(cvx[vecino2]+cvx[i]);// - vxParticleI[0];//Use this for projection in 2D
+>       vectorVelocities[1+3*j] = 0.5*(cvz[vecino0]+cvz[i]);// - vzParticleI[0];//Use this for projection in 2D
+>       vectorVelocities[2+3*j] = 0.5*(cvy[vecino1]+cvy[i]);// - vyParticleI[0];//Use this for projection in 2D
+249a248,253
+> 
+> 
+> 
+> 
+> 
+> 
+251c255
+< }
+---
+> 
+
+saveFunctionsSchemeIncompressibleBoundary2D.cu
+46c46
+< 	  if(!space_saveFluidVTK::saveFluidVTK(0)) return 0;
+---
+> 	  if(!saveFluidVTK(0)) return 0;
+59c59
+<       if(!space_saveFluidVTK::saveFluidVTK(1)) return 0;
+---
+>       if(!saveFluidVTK(1)) return 0;
+
+saveFunctionsSchemeIncompressibleBoundary.cu
+46c46
+<     if(!space_saveFluidVTK::saveFluidVTK(0)) return 0;
+---
+> 	  if(!saveFluidVTK(0)) return 0;
+59c59
+<       if(!space_saveFluidVTK::saveFluidVTK(1)) return 0;
+---
+>       if(!saveFluidVTK(1)) return 0;
+
+saveFunctionsSchemeStokesLimit.cu
+21,23c21
+< // Uncomment the appropiate line to use HydroGrid
+< #undef HydroGrid 
+< // #define HydroGrid 1
+---
+> bool saveFunctionsSchemeStokesLimit(int index, long long step){
+26,46d23
+< #ifdef HydroGrid
+< extern "C" {
+< #include "HydroGrid.h"
+< }
+< void calculateConcentration(string outputname,
+<                             double lx,       // Domain x length
+<                             double ly,       // Domain y length
+<                             int green_start, // Start of "green" particles
+<                             int green_end,   // End of "green" particles
+<                             int mx,          // Grid size x
+<                             int my,          // Grid size y
+<                             int step,        // Step of simulation
+<                             double dt,       // Time interval between successive snapshots (calls to updateHydroGrid)
+<                             int np,          // Number of particles
+<                             int option,      // option = 0 (initialize), 1 (update), 2 (save), 3 (finalize)
+<                             double *x_array, 
+<                             double *y_array);
+< #endif
+< 
+< bool saveFunctionsSchemeStokesLimit(int index, long long step, int samplefreq){
+< 
+50,69c27
+<       if(samplefreq > 0){
+<         if(!saveParticles(index,step)) return 0;
+<       }
+< #ifdef HydroGrid
+<     if((quasi2D or stokesLimit2D) and sampleHydroGrid > 0){
+<       calculateConcentration(outputname,
+<                              lx,                   // Domain x length
+<                              ly,                   // Domain y length
+<                              greenStart,           // Start of "green" particles
+<                              greenEnd,             // End of "green" particles
+<                              mxHydroGrid,          // Grid size x
+<                              myHydroGrid,          // Grid size y
+<                              step,                 // Step of simulation
+<                              dt * sampleHydroGrid, // Time interval between successive snapshots (calls to updateHydroGrid)
+<                              np,                   // Number of particles
+<                              0,                    // option = 0 (initialize), 1 (update), 2 (save), 3 (finalize)
+<                              rxParticle, 
+<                              ryParticle); 
+<     }
+< #endif  
+---
+>       if(!saveParticles(index,step)) return 0;
+72c30
+<   // Use save functions
+---
+>   //Use save functions
+75,77c33
+<       if(samplefreq > 0){
+<         if(!saveParticles(index,step)) return 0;
+<       }
+---
+>       if(!saveParticles(index,step)) return 0;
+79c35
+<   // Close save functions
+---
+>   //Close save functions
+83,171c39
+<       if(samplefreq > 0){
+<         if(!saveParticles(index,step)) return 0;
+<       }
+< #ifdef HydroGrid
+<     if((quasi2D or stokesLimit2D) and sampleHydroGrid > 0){
+<       calculateConcentration(outputname,
+<                              lx,                   // Domain x length
+<                              ly,                   // Domain y length
+<                              greenStart,           // Start of "green" particles
+<                              greenEnd,             // End of "green" particles
+<                              mxHydroGrid,          // Grid size x
+<                              myHydroGrid,          // Grid size y
+<                              step,                 // Step of simulation
+<                              dt * sampleHydroGrid, // Time interval between successive snapshots (calls to updateHydroGrid)
+<                              np,                   // Number of particles
+<                              3,                    // option = 0 (initialize), 1 (update), 2 (save), 3 (finalize)
+<                              rxParticle, 
+<                              ryParticle); 
+<     }
+< #endif  
+<   }
+<   // Update HydroGrid
+<   else if(index==3){
+< #ifdef HydroGrid
+<     if((quasi2D or stokesLimit2D) and sampleHydroGrid > 0){
+<       // The first step is special, because correlations
+<       if(step == 0){
+<         calculateConcentration(outputname,
+<                                lx,                   // Domain x length
+<                                ly,                   // Domain y length
+<                                greenStart,           // Start of "green" particles
+<                                greenEnd,             // End of "green" particles
+<                                mxHydroGrid,          // Grid size x
+<                                myHydroGrid,          // Grid size y
+<                                step,                 // Step of simulation
+<                                dt * sampleHydroGrid, // Time interval between successive snapshots (calls to updateHydroGrid)
+<                                np,                   // Number of particles
+<                                1,                    // option = 0 (initialize), 1 (update), 2 (save), 3 (finalize)
+<                                rxParticle, 
+<                                ryParticle); 
+<         calculateConcentration(outputname,
+<                                lx,                   // Domain x length
+<                                ly,                   // Domain y length
+<                                greenStart,           // Start of "green" particles
+<                                greenEnd,             // End of "green" particles
+<                                mxHydroGrid,          // Grid size x
+<                                myHydroGrid,          // Grid size y
+<                                step,                 // Step of simulation
+<                                dt * sampleHydroGrid, // Time interval between successive snapshots (calls to updateHydroGrid)
+<                                np,                   // Number of particles
+<                                2,                    // option = 0 (initialize), 1 (update), 2 (save), 3 (finalize)
+<                                rxParticle, 
+<                                ryParticle); 
+<       }
+<       calculateConcentration(outputname,
+<                              lx,                   // Domain x length
+<                              ly,                   // Domain y length
+<                              greenStart,           // Start of "green" particles
+<                              greenEnd,             // End of "green" particles
+<                              mxHydroGrid,          // Grid size x
+<                              myHydroGrid,          // Grid size y
+<                              step,                 // Step of simulation
+<                              dt * sampleHydroGrid, // Time interval between successive snapshots (calls to updateHydroGrid)
+<                              np,                   // Number of particles
+<                              1,                    // option = 0 (initialize), 1 (update), 2 (save), 3 (finalize)
+<                              rxParticle, 
+<                              ryParticle); 
+<     }
+< #endif  
+<   }
+<   // Print HydroGrid
+<   else if(index==4){
+< #ifdef HydroGrid
+<     if((quasi2D or stokesLimit2D) and sampleHydroGrid > 0){
+<       calculateConcentration(outputname,
+<                              lx,                   // Domain x length
+<                              ly,                   // Domain y length
+<                              greenStart,           // Start of "green" particles
+<                              greenEnd,             // End of "green" particles
+<                              mxHydroGrid,          // Grid size x
+<                              myHydroGrid,          // Grid size y
+<                              step,                 // Step of simulation
+<                              dt * sampleHydroGrid, // Time interval between successive snapshots (calls to updateHydroGrid)
+<                              np,                   // Number of particles
+<                              2,                    // option = 0 (initialize), 1 (update), 2 (save), 3 (finalize)
+<                              rxParticle, 
+<                              ryParticle); 
+<     }
+< #endif  
+---
+>       if(!saveParticles(index,step)) return 0;
+177a46,47
+> 
+> 
+
+saveParticles.cu
+41,48c41,44
+<     file << "#NUMBER PARTICLES " << np << endl;
+< 
+<     if(!(stokesLimitFirstOrder or stokesLimitFirstOrder or quasi2D)){
+<       savefile = outputname + ".velocityParticles";
+<       fileVelocity.open(savefile.c_str());
+<       fileVelocity << "#NUMBER PARTICLES " << np << endl;
+<     }
+< 
+---
+>     savefile = outputname + ".velocityParticles";
+>     fileVelocity.open(savefile.c_str());
+>     fileVelocity << "#NUMBER PARTICLES " << np << endl;
+>     
+60a57
+>     float x,y,z;
+64,67c61,77
+<       file << rxParticle[i] << " " << ryParticle[i] << " " << rzParticle[i] << endl;
+<       if(!(stokesLimitFirstOrder or stokesLimitFirstOrder or quasi2D)){
+< 	fileVelocity << vxParticle[i] << " " << vyParticle[i] << " " << vzParticle[i] << endl;
+<       }
+---
+>       x = rxParticle[i];
+>       y = ryParticle[i];
+>       z = rzParticle[i];
+>      
+>       /* 
+>       x /= 35.0;
+>       y /= 35.0;
+>       z /= 35.0;
+>      
+>       x-=int( ( (x<0)?-0.5:0.5 ) + x);
+>       y-=int( ( (y<0)?-0.5:0.5 ) + y);
+>       z-=int( ( (z<0)?-0.5:0.5 ) + z);
+> 
+>       file << x << " " << y << " " << z <<" "<< 1/35.0<<" "<<particle_types[i]<< endl;
+>       */
+>       file << x << " " << y << " " << z <<" 0.5 "<<particle_types[i]<< endl;
+>       fileVelocity << vxParticle[i] << " " << vyParticle[i] << " " << vzParticle[i] << endl;
+75,77c85
+<     if(!(stokesLimitFirstOrder or stokesLimitFirstOrder or quasi2D)){
+<       fileVelocity.close();
+<     }
+---
+>     fileVelocity.close();
+
+schemeStokesLimit.cu
+65c65
+<   if(!saveFunctionsSchemeStokesLimit(0,0, samplefreq)) return 0;
+---
+>   if(!saveFunctionsSchemeStokesLimit(0,0)) return 0;
+73c73
+<   if(!saveFunctionsSchemeStokesLimit(2,0, samplefreq)) return 0;
+---
+>   if(!saveFunctionsSchemeStokesLimit(2,0)) return 0;
+98c98
+<   if(!freeMemoryStokesLimit()) return 0;
+---
+>   if(!freeMemoryQuasiNeutrallyBuoyant()) return 0;
+
+schemeStokesLimitFirstOrder.cu
+61c61
+<   if(!saveFunctionsSchemeStokesLimit(0,0, samplefreq)) return 0;
+---
+>   if(!saveFunctionsSchemeStokesLimit(0,0)) return 0;
+69c69
+<   if(!saveFunctionsSchemeStokesLimit(2,0, samplefreq)) return 0;
+---
+>   if(!saveFunctionsSchemeStokesLimit(2,0)) return 0;
+
+simpleCubic.cpp
+25,27c25,27
+< void simpleCubic(const int dimension){
+<   double dx, dy, dz;
+<   int nx, ny, nz, n;
+---
+> void simpleCubic(){
+>     double dx, dy, dz;
+>     int nx, ny, nz, n;
+29c29,30
+<   if(dimension == 3){
+---
+>     //sigma = cutoff;//pow(lx*ly*lz/(np*4.),1./3.);
+>     //sigma = 2.*lx/double(mx);
+30a32,34
+> 
+>     nx = (int(lx/sigma) ? int(lx/sigma) : 1);
+>     ny = (int(ly/sigma) ? int(ly/sigma) : 1);
+32,58c36,69
+<   }
+<   else{
+<     sigma = sqrt(lx*ly/np);
+<     nz = 1;
+<   }
+<   nx = (int(lx/sigma) ? int(lx/sigma) : 1);
+<   ny = (int(ly/sigma) ? int(ly/sigma) : 1);
+<     
+<   while((nx*ny*nz)<np){
+<     if((nx*ny*nz)<np) nx++;
+<     if((nx*ny*nz)<np) ny++;
+<     if((nx*ny*nz)<np) nz++;
+<   }
+< 
+<   dx = lx/double(nx);
+<   dy = ly/double(ny);
+<   dz = lz/double(nz);
+<   
+<   n = 0;  
+<   for (int i=0;i<=nz-1;i++){
+<     for(int j=0;j<=ny-1;j++){
+<       for(int k=0;k<=nx-1;k++){
+< 	if(n<np){
+< 	  n = n + 1;
+< 	  rxParticle[n-1] = (k + 0.5) * dx - lx/2.;
+< 	  ryParticle[n-1] = (j + 0.5) * dy - ly/2.;
+< 	  rzParticle[n-1] = (i + 0.5) * dz - lz/2.;
+---
+>     
+>     while((nx*ny*nz)<np){
+>       if((nx*ny*nz)<np) nx++;
+>       if((nx*ny*nz)<np) ny++;
+>       if((nx*ny*nz)<np) nz++;
+>     }
+> 
+>     dx = lx/double(nx);
+>     dy = ly/double(ny);
+>     dz = lz/double(nz);
+> 
+>     //nz = np/(nx*ny) + 1;
+>     
+>     //write(*,*) "nx ny nz", nx, ny, nz;
+>     //write(*,*) "dx, dy, dz", dx, dy, dz;
+>     
+>     n = 0;
+>     
+>     for (int i=0;i<=nz-1;i++){
+> 	for(int j=0;j<=ny-1;j++){
+> 	    for(int k=0;k<=nx-1;k++){
+> 		if(n<np){
+> 		    n = n + 1;
+> 		    rxParticle[n-1] = (k + 0.5) * dx - lx/2.;
+> 		    ryParticle[n-1] = (j + 0.5) * dy - ly/2.;
+> 		    rzParticle[n-1] = (i + 0.5) * dz - lz/2.;
+> 		    //p[n-1].r[0] = (k + 0.5 - nx/2) * dx;
+> 		    //p[n-1].r[1] = (j + 0.5 - ny/2) * dy;
+> 		    //p[n-1].r[2] = (i + 0.5 - nz/2) * dz;
+> 		    //p(n)%r(1) = (k + 0.5 - nx/2) * dx
+> 		    //p(n)%r(2) = (j + 0.5 - ny/2) * dy
+> 		    //p(n)%r(3) = (i + 0.5 - nz/2) * dz
+> 		}
+> 	    }
+60d70
+<       }
+62c72,73
+<   } 
+---
+>     
+> 
+
+stokesLimitFunctions.cu
+21d20
+< 
+27,56d25
+< 
+< //Raul added, a kernel to add a shear flow to the fluid. A sinusoidal force is added to each fluid cell. This shear flow is intended to be used for viscosity measurements.
+< __global__ void addShearFlowStokesLimit(cufftDoubleComplex *vxZ,
+< 					cufftDoubleComplex *vyZ,
+< 					cufftDoubleComplex *vzZ,
+< 					double viscosityMeasureAmplitude,
+< 					double viscosityMeasureMode,
+< 					int viscosityMeasurePlane,
+< 					int viscosityMeasureDir){
+<   const int i = blockDim.x * blockIdx.x + threadIdx.x;
+<   if(i>=ncellsGPU) return;
+<   double posfluid;
+<   int ic;
+<   switch(viscosityMeasurePlane){
+<   case 0: ic = i%mxGPU;                    posfluid = (ic-0.5*mxGPU+0.5)/(double)mxGPU;    break;
+<   case 1: ic = (i%(mxGPU*mytGPU)) /mxGPU;  posfluid = (ic-0.5*mytGPU+0.5)/(double)mytGPU;  break;
+<   case 2: ic = i/(mxGPU*mytGPU);           posfluid = (ic-0.5*mzGPU+0.5)/(double)mzGPU;    break;
+<   }
+<   constexpr double pi2 = 6.28318530717958648;
+<   double force = viscosityMeasureAmplitude * sin(pi2*viscosityMeasureMode* posfluid);
+<   switch(viscosityMeasureDir){
+<   case 0: vxZ[i].x -= force; break;
+<   case 1: vyZ[i].x -= force; break;
+<   case 2: vzZ[i].x -= force; break;
+<   }
+<   
+< }
+< 
+< 
+< 
+90d58
+< 
+92a61,62
+> 
+> 
+2799d2768
+< 
+2801a2771,2772
+> 
+> 
+3800c3771,3774
+<   wx = vx;
+---
+>   //  wx = vx;
+>   double pi2 = 6.28318530717958648;
+>   double perturbation = pressurea1GPU * sin(pi2 *pressurea0GPU* ((i/(mxGPU*mytGPU))-0.5*mzGPU+0.5) / double(mzGPU));
+>   wx = vx - perturbation; 
