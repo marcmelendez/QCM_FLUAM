@@ -1,0 +1,104 @@
+#Select the GPU to run fluam
+#In general it's better not to use this option
+#setDevice 0
+
+#Chose scheme
+particlesWall
+
+# I guess that particles = 1 means that there are particles, and particles = 0 there are not particles
+particles		1
+#Number of particles (it does not accept numberparticles = 0)
+
+colors			1
+
+#Particle excess of mass (if mass=0 the particles are neutrally buoyant).
+mass			0
+
+#***** Wall parameters spring *************
+#** freq Wall is the imposed omega0  **
+freqWall 0.00314159265358979
+#massWall 4525483.3995939
+
+#Cutoff for the particle-particle interaction
+#******* This cutoff is not relevant because in initForcesNonBonded.cu the force has been defined as 0 *********
+computeNonBondedForces 0
+cutoff                  1.0
+#Give file with the bonded force between particles (see fluam/bin/inputfile/README)
+bondedForces		bonds.fluam.dat
+##threeBondedForces       bonds3.fluam.dat
+#Maximum number of particles in the neighbor list
+maxNumberPartInCellNonBonded    20
+maxNumberPartInCell     	20
+
+#Fluid density
+densfluid               1
+#Shear viscosity
+shearviscosity          0.226194671058465
+#Bulk viscosity
+bulkviscosity           0
+#Temperature in energy units (T -> k_B*T)
+#temperature             0.1
+temperature             0.0
+#Give parameters that define the equation of state. The pressure is
+# p = a0 + a1*density + a2*density**2
+#Give parameters a0 a1 a2
+pressureparameters      0	4.0  0
+
+
+#Components of the fluid velocity at the left/right walls.
+#The behavior for vyWall != 0 has not been tested.
+vxWall			0.00314159265358979	0
+
+
+#Number of fluid cells in the directions x, y and z
+cells			100	128	100
+#Dimensions of the simulation box
+celldimension		50	64	50
+
+
+#Fluid initial conditions
+#initfluid=0, initial velocity=backgroundvelocity and density=density_0
+#initfluid=1, initial velocity=backgroundvelocity+randomFluctuations and density=density_0
+#See file fluam/src/initializeFluid.cpp
+initfluid 1
+#Give background velocity components vx, vy, vz. If not one is given
+#the background velocity is set to zero
+backgroundvelocity 	 0  	0	    0
+
+#To give an initial configuration for the particles
+#set loadparticles to 1 and provide the file for initial configuration
+#and optionally a file for the initial velocities.
+#If no file is given the particles start in simple cubic lattice.
+loadparticles		1
+coordinates		initial_configuration.dat
+#velocities		/home/floren/gpuFH/bin/reynolds.vel
+
+#Give initial fluid configuration. If not one is given fluam uses the option given in initfluid
+#fluid			/home/floren/gblob/data/gVsReynolds/quasiNeutrallyBuoyant/run57.fluidFinalConfiguration
+
+
+#Seed to feed the random number generator. If no one is given
+#fluam takes one from the computer clock.
+#seed			1
+
+
+
+#Number of relaxation steps during which fluam save no data
+numstepsRelaxation	0
+#Number of steps (no counting numstepsRelaxation)
+numsteps               1200000
+#Save data every samplefreq steps
+samplefreq              1200
+savefreq		1200
+#Time step
+dt			0.025
+
+
+#Save data in VTK format to be visualized with the program VisIt
+#See file saveFluidVTK.cu and the web https://wci.llnl.gov/simulation/computer-codes/visit/
+saveVTK		0
+saveFluid 0
+
+#Prefix for the output files. The directory where the data is saved
+#should exist before running fluam
+outputname		output_data/run1
