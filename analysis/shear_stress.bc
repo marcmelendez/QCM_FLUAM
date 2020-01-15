@@ -1,0 +1,68 @@
+/*                       shear_stress.bc
+   Calculate the theoretical shear stress on a vibrating wall immersed in
+   a fluid when there is a stationary wall opposite.
+   This program depends on complex.bc.
+   Run with: bc -l complex.bc shear_stress.bc
+   The program begins by reading in the following parameters:
+   - Fluid density
+   - Fluid penetration
+   - Angular frequency
+   - Velocity amplitude of oscillating wall
+   - Separation between vibrating wall and stationary wall
+*/
+
+/* Analytical expression for the shear stress phasor (per unit area)
+
+     sigma(omega) = eta (1 - i) (C - D) / delta,
+
+   with
+
+     D = u0 exp((1 - i)/delta) / (2 sinh((1 - i)/delta)).
+     C = u0 - C.
+*/
+define shear_stress(eta, delta, omega, u0, ly)
+{
+  auto c[], d[], ze[], exp_z[], sinh_z[], cmd[], onemi[], sigma[];
+
+  /* Define complex constant 1 - i */
+  onemi[0] = 1; onemi[1] = -1;
+
+  /* Complex argument in the exponents */
+  ze[0] = ly/delta; ze[1] = -ze[0];
+
+  /* Calculate complex constants C and D */
+  . = expz(ze[], exp_z[]);
+  . = sinhz(ze[], sinh_z[]);
+  . = divz(exp_z[], sinh_z[], d[]);
+  d[0] *= 0.5*u0; d[1] *= 0.5*u0;
+  c[0] = u0 - d[0]; c[1] = - d[1];
+
+  /* (C - D) */
+  . = subtz(c[], d[], cmd[]);
+
+  /* (1 - i)(C - D) */
+  . = prodz(onemi[], cmd[], sigma[]);
+
+  /* Shear stress */
+  sigma[0] *= eta/delta;
+  sigma[1] *= eta/delta;
+
+  print sigma[0], "\t", sigma[1], "\n";
+
+  return 0;
+}
+
+/* Read calculation parameters */
+rho = read(); /* Fluid density */
+delta = read(); /* Fluid penetration */
+omega = read(); /* Angular frequency */
+u0 = read(); /* Velocity amplitude of oscillating wall */
+ly = read(); /* Separation between vibrating wall and stationary wall */
+
+eta = 0.5*omega*rho*(delta^2); /* Shear viscosity */
+
+/* Output the shear stress */
+print ly, "\t";
+. = shear_stress(eta, delta, omega, u0, ly)
+
+quit;
