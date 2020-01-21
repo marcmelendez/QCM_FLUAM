@@ -99,6 +99,9 @@ int main(int argc, char * argv[])
     printf("\n");
   }
 
+  /* Clean up */
+  fclose(positions_file);
+
   return 0;
 }
 
