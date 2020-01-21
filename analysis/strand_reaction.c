@@ -1,10 +1,11 @@
-/* strand_structure.c:
-   Calculate the elastic network connectivity matrix for a semiflexible polymer
-   bead strand for a given configuration. */
+/* strand_reaction.c:
+   Calculate the forces on the fluid due to a semiflexible polymer bead strand
+   in a Stokes boundary layer flow. */
 # include <stdio.h>
 # include <stdlib.h>
 # include <string.h>
 # include <math.h>
+# include <complex.h>
 
 /* Calculate the forces on each bead of the strand */
 void strand_forces(int N, double kbond, double kang, double * positions, double * forces);
@@ -12,8 +13,8 @@ void strand_forces(int N, double kbond, double kang, double * positions, double 
 int main(int argc, char * argv[])
 {
   /* Usage message */
-  if(argc < 5) {
-    printf("Usage: %s <number of configurations> <number of monomers> <harmonic bond constant> <angular spring constant> [<configuration file>]\n", argv[0]);
+  if(argc < 8) {
+    printf("Usage: %s <number of configurations> <number of monomers> <harmonic bond constant> <angular spring constant> <fluid density> <fluid viscosity> <oscillation frequency> [<configuration file>]\n", argv[0]);
     return 0;
   }
   /* Variable declarations */
@@ -21,6 +22,7 @@ int main(int argc, char * argv[])
   int N = atoi(argv[2]); /* Number of particles in the polymer strand */
   double kbond = atof(argv[3]); /* Harmonic bond spring constant */
   double kang = atof(argv[4]); /* Angular bond spring constant */
+  double
   FILE * positions_file = stdin; /* Name of configuration file (defaults to stdin) */
   char text_buffer[250];
   int nc; /* Configuration number */
@@ -32,6 +34,8 @@ int main(int argc, char * argv[])
   double forces[3*N]; /* Array to store the forces on each monomer */
   double forces_new[3*N]; /* Changed forces due to a small displacement */
   double K[N*N]; /* Connectivity matrix */
+  complex x[N]; /* Horizontal amplitude phasor */
+  complex F[N]; /* Force phasor */
 
   /* Open file if file name provided */
   if(argc > 5) {
@@ -90,14 +94,11 @@ int main(int argc, char * argv[])
       /* Undo the displacement of particle i in the x direction */
       positions[3*i] += DELTA_X;
     }
-
-    /* Output connectivity matrix */
-    for(i = 0; i < N; i++) {
-      for(j = 0; j < N; j++) printf("%f ", K[N*i + j]);
-      printf("\n");
-    }
-    printf("\n");
   }
+
+  /* Calculate position phasors for all the points on the strand  */
+  
+
 
   /* Clean up */
   fclose(positions_file);

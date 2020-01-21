@@ -16,8 +16,8 @@ int main(int argc, char * argv[])
   /* Variable declarations */
   int Nc = atoi(argv[1]); /* Number of polymer strand configurations */
   int N = atoi(argv[2]); /* Number of particles in the polymer strand */
-  int eta = atof(argv[3]); /* Shear viscosity */
-  int delta = atof(argv[4]); /* Penetration of oscillating flow */
+  double eta = atof(argv[3]); /* Shear viscosity */
+  double delta = atof(argv[4]); /* Penetration of oscillating flow */
   FILE * data_file = stdin; /* Name of data file (defaults to stdin) */
   char text_buffer[250];
   int nc; /* Configuration number */

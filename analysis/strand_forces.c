@@ -16,8 +16,8 @@ int main(int argc, char * argv[])
   /* Variable declarations */
   int Nc = atoi(argv[1]); /* Number of polymer strand configurations */
   int N = atoi(argv[2]); /* Number of particles in the polymer strand */
-  int kbond = atof(argv[3]); /* Harmonic bond spring constant */
-  int kang = atof(argv[4]); /* Angular bond spring constant */
+  double kbond = atof(argv[3]); /* Harmonic bond spring constant */
+  double kang = atof(argv[4]); /* Angular bond spring constant */
   FILE * positions_file = stdin; /* Name of configuration file (defaults to stdin) */
   char text_buffer[250];
   int nc; /* Configuration number */
