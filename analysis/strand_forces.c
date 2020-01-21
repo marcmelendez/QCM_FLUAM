@@ -9,14 +9,15 @@
 int main(int argc, char * argv[])
 {
   /* Usage message */
-  if(argc < 4) {
-    printf("Usage: %s <number of configurations> <number of monomers> <angular spring constant> [<configuration file>]\n", argv[0]);
+  if(argc < 5) {
+    printf("Usage: %s <number of configurations> <number of monomers> <harmonic bond constant> <angular spring constant> [<configuration file>]\n", argv[0]);
     return 0;
   }
   /* Variable declarations */
   int Nc = atoi(argv[1]); /* Number of polymer strand configurations */
   int N = atoi(argv[2]); /* Number of particles in the polymer strand */
-  int kang = atof(argv[3]); /* Angular bond spring constant */
+  int kbond = atof(argv[3]); /* Harmonic bond spring constant */
+  int kang = atof(argv[4]); /* Angular bond spring constant */
   FILE * positions_file = stdin; /* Name of configuration file (defaults to stdin) */
   char text_buffer[250];
   int nc; /* Configuration number */
@@ -36,10 +37,10 @@ int main(int argc, char * argv[])
   double Fi, Fk; /* Force terms */
 
   /* Open file if file name provided */
-  if(argc > 4) {
-    positions_file = fopen(argv[4], "r");
+  if(argc > 5) {
+    positions_file = fopen(argv[5], "r");
     if(positions_file == NULL) {
-      fprintf(stderr, "Error: file not found: %s.\n", argv[3]);
+      fprintf(stderr, "Error: file not found: %s.\n", argv[5]);
       return -1;
     }
   }
@@ -70,6 +71,26 @@ int main(int argc, char * argv[])
     for(i = 0; i < 3*N; i++) forces[i] = 0;
 
     /* Calculate forces */
+
+    /* Harmonic bonds */
+    for(n = 0; n < N - 1; n++) {
+      /* Separation vector rij */
+      for(l = 0; l < 3; l++) rij[l] = positions[3*(n + 1) + l] - positions[3*n + l];
+
+      /* Distance */
+      r2_1 = 0; for(l = 0; l < 3; l++) r2_1 += rij[l]*rij[l];
+
+      /* Inverse distance */
+      invr_1 = 1/sqrt(r2_1);
+
+      /* Forces */
+      for(l = 0; l < 3; l++) {
+        forces[3*n + l] += kbond*(r2_1 - 1)*rij[l]*invr_1;
+        forces[3*(n + 1) + l] -= kbond*(r2_1 - 1)*rij[l]*invr_1;
+      }
+    }
+
+    /* Angular springs */
     for(n = 0; n < N - 2; n++) {
       /* Vectors rij and rjk */
       for(l = 0; l < 3; l++) rij[l] = positions[3*(n + 1) + l] - positions[3*n + l];
@@ -80,6 +101,14 @@ int main(int argc, char * argv[])
       for(l = 0; l < 3; l++) {
         r2_1 += rij[l]*rij[l];
         r2_2 += rjk[l]*rjk[l];
+      }
+
+
+
+      /* Harmonic bond */
+      for(l = 0; l < 3; l++) {
+        forces[3*n + l] = kbond*rij[l];
+        forces[3*(n + 1) + l] = kbond*rij[l];
       }
 
       /* Inverse distances */
