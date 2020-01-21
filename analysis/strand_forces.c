@@ -103,14 +103,6 @@ int main(int argc, char * argv[])
         r2_2 += rjk[l]*rjk[l];
       }
 
-
-
-      /* Harmonic bond */
-      for(l = 0; l < 3; l++) {
-        forces[3*n + l] = kbond*rij[l];
-        forces[3*(n + 1) + l] = kbond*rij[l];
-      }
-
       /* Inverse distances */
       invr_1 = 1/sqrt(r2_1);
       invr_2 = 1/sqrt(r2_2);
