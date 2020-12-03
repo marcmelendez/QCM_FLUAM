@@ -8,4 +8,4 @@ Software developed for the Catch-U-DNA project (https://catch-u-dna.com)
 
 # Need help?
 
-Check the documentation in the **Hydrodynamic code for QCM** document. If you need help installing or setting up the simulations, contact us for a free quote at **marc.melendez (at) uam.es**.
+Check the documentation in the **Hydrodynamic code for QCM** document.
