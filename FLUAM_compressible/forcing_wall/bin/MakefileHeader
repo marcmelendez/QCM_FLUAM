@@ -39,9 +39,8 @@ endif
 #
 #
 #Cuda flags
-NVCCFLAGS = -O3 $(GENCODE_FLAGS) --compiler-bindir /usr/bin/gcc $(CUDALIB)
+NVCCFLAGS = -O3 -std=c++11 $(GENCODE_FLAGS) $(CUDALIB)
 
-#
 #
 #Other flags you may want to add
 #-use_fast_math
@@ -79,9 +78,8 @@ HydroAnalisysINCL = -I$(SRC_HYDROLIB)
 
 #
 #
-#Libraries -lfftw3 -lfftw3f
-LIBRARIES = -L/usr/local/cuda/lib64 -lcurand -L/usr/lib64/ -L./ -lgfortran -lcufft -lm 
-STATIC_LIBRARIES = 
+#Libraries
+LIBRARIES = -L/usr/local/cuda/lib64 -lcurand
 
 #
 #

@@ -39,7 +39,7 @@ endif
 #
 #
 #Cuda flags
-NVCCFLAGS = -O3 $(GENCODE_FLAGS) --compiler-bindir /usr/bin/gcc $(CUDALIB)
+NVCCFLAGS = -O3 -std=c++11 $(GENCODE_FLAGS) $(CUDALIB)
 
 #
 #Other flags you may want to add
