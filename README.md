@@ -5,3 +5,7 @@ The code here slightly modifies Florencio Balboa Usabiaga's original code, which
 found at https://github.com/fbusabiaga/fluam
 
 Software developed for the Catch-U-DNA project (https://catch-u-dna.com)
+
+# Need help?
+
+Check the documentation in the **Hydrodynamic code for QCM** document.
